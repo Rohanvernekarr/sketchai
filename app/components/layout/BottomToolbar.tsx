@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import IconButton from '../ui/IconButton';
+import { BrushType } from '../types';
 
 interface BottomToolbarProps {
   strokeColor: string;
@@ -8,6 +9,10 @@ interface BottomToolbarProps {
   onColorChange: (color: string) => void;
   onFillColorChange?: (color: string) => void;
   onStrokeWidthChange: (width: number) => void;
+  brush?: BrushType;
+  onBrushChange?: (brush: BrushType) => void;
+  opacity?: number; // 0..1
+  onOpacityChange?: (opacity: number) => void;
   zoom: number;
   onZoomChange: (zoom: number) => void;
   onUndo?: () => void;
@@ -23,6 +28,10 @@ export default function BottomToolbar({
   onColorChange,
   onFillColorChange,
   onStrokeWidthChange,
+  brush = 'pencil',
+  onBrushChange,
+  opacity = 1,
+  onOpacityChange,
   zoom, 
   onZoomChange,
   onUndo,
@@ -40,6 +49,12 @@ export default function BottomToolbar({
   ];
 
   const strokeWidths = [1, 2, 4, 6, 8, 12, 16, 20];
+  const brushes: { id: BrushType; label: string }[] = [
+    { id: 'pencil', label: 'Pencil' },
+    { id: 'marker', label: 'Marker' },
+    { id: 'highlighter', label: 'Highlighter' },
+    { id: 'calligraphy', label: 'Calligraphy' },
+  ];
 
   return (
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
@@ -131,7 +146,7 @@ export default function BottomToolbar({
           </button>
           
           {showStrokeOptions && (
-            <div className="absolute bottom-full left-0 mb-2 p-3 bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl">
+            <div className="absolute bottom\-full left-0 mb-2 p-3 bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl">
               <div className="flex flex-col gap-2">
                 {strokeWidths.map(width => (
                   <button
@@ -155,6 +170,38 @@ export default function BottomToolbar({
             </div>
           )}
         </div>
+
+        {/* Brush Selector */}
+        {onBrushChange && (
+          <div className="relative">
+            <select
+              className="bg-zinc-700 text-xs text-zinc-200 px-2 py-1 rounded hover:bg-zinc-600 focus:outline-none"
+              value={brush}
+              onChange={(e) => onBrushChange(e.target.value as BrushType)}
+              title="Brush type"
+            >
+              {brushes.map(b => (
+                <option key={b.id} value={b.id}>{b.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Opacity */}
+        {onOpacityChange && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-zinc-400">Opacity</span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={opacity}
+              onChange={(e) => onOpacityChange(parseFloat(e.target.value))}
+            />
+            <span className="text-xs text-zinc-300">{Math.round(opacity * 100)}%</span>
+          </div>
+        )}
 
         <div className="w-px h-6 bg-zinc-600"></div>
 

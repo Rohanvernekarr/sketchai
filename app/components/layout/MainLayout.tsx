@@ -5,13 +5,15 @@ import LeftSidebar from './LeftSidebar';
 import VerticalToolbar from './VerticalToolbar';
 import BottomToolbar from './BottomToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
-import { Tool, DrawingPath } from '../types';
+import { Tool, DrawingPath, BrushType } from '../types';
 
 export default function MainLayout() {
   const [activeTool, setActiveTool] = useState<Tool>('pen');
   const [strokeColor, setStrokeColor] = useState('#ffffff');
   const [fillColor, setFillColor] = useState<string>('');
   const [strokeWidth, setStrokeWidth] = useState(2);
+  const [brush, setBrush] = useState<BrushType>('pencil');
+  const [opacity, setOpacity] = useState<number>(1);
   const [zoom, setZoom] = useState(100);
   const [history, setHistory] = useState<DrawingPath[][]>([]);
   const [historyStep, setHistoryStep] = useState(-1);
@@ -99,6 +101,8 @@ export default function MainLayout() {
             strokeColor={strokeColor}
             strokeWidth={strokeWidth}
             fillColor={fillColor}
+            brush={brush}
+            opacity={opacity}
             onPathsChange={handlePathsChange}
           />
           <BottomToolbar 
@@ -108,6 +112,10 @@ export default function MainLayout() {
             onColorChange={setStrokeColor}
             onFillColorChange={setFillColor}
             onStrokeWidthChange={setStrokeWidth}
+            brush={brush}
+            onBrushChange={setBrush}
+            opacity={opacity}
+            onOpacityChange={setOpacity}
             zoom={zoom}
             onZoomChange={setZoom}
             onUndo={handleUndo}

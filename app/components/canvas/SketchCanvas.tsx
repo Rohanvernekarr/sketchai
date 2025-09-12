@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Point, DrawingPath, Tool, CanvasState } from '../types';
+import { Point, DrawingPath, Tool, CanvasState, BrushType } from '../types';
 
 interface SketchCanvasProps {
   activeTool: Tool;
@@ -8,6 +8,8 @@ interface SketchCanvasProps {
   strokeWidth: number;
   fillColor?: string;
   onPathsChange?: (paths: DrawingPath[]) => void;
+  brush?: BrushType;
+  opacity?: number; // 0..1
 }
 
 export default function SketchCanvas({ 
@@ -15,7 +17,9 @@ export default function SketchCanvas({
   strokeColor, 
   strokeWidth,
   fillColor,
-  onPathsChange
+  onPathsChange,
+  brush = 'pencil',
+  opacity = 1
 }: SketchCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -27,6 +31,7 @@ export default function SketchCanvas({
   });
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const [previewPath, setPreviewPath] = useState<DrawingPath | null>(null);
+  const [textInput, setTextInput] = useState<{ x: number; y: number; value: string } | null>(null);
 
   // Initialize canvas
   useEffect(() => {
@@ -63,6 +68,12 @@ export default function SketchCanvas({
 
   const startDrawing = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const point = getCoordinates(e);
+    if (activeTool === 'text') {
+      // Open text input overlay
+      setTextInput({ x: point.x, y: point.y, value: '' });
+      return;
+    }
+
     setIsDrawing(true);
     setStartPoint(point);
 
@@ -72,11 +83,13 @@ export default function SketchCanvas({
         tool: activeTool,
         points: [point],
         color: activeTool === 'eraser' ? '#FFFFFF' : strokeColor,
-        strokeWidth: activeTool === 'eraser' ? strokeWidth * 2 : strokeWidth
+        strokeWidth: activeTool === 'eraser' ? strokeWidth * 2 : strokeWidth,
+        opacity,
+        brush: activeTool === 'pen' ? brush : undefined
       };
       setPaths(prev => [...prev, newPath]);
     }
-  }, [activeTool, strokeColor, strokeWidth, getCoordinates]);
+  }, [activeTool, strokeColor, strokeWidth, opacity, brush, getCoordinates]);
 
   const draw = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing || !startPoint) return;
@@ -89,7 +102,7 @@ export default function SketchCanvas({
         updated[updated.length - 1].points.push(point);
         return updated;
       });
-    } else if (['rectangle', 'circle', 'line'].includes(activeTool)) {
+    } else if (['rectangle', 'circle', 'line', 'arrow'].includes(activeTool)) {
       // Create preview for shapes
       const preview: DrawingPath = {
         id: 'preview',
@@ -97,16 +110,17 @@ export default function SketchCanvas({
         points: [startPoint, point],
         color: strokeColor,
         strokeWidth,
-        fillColor
+        fillColor,
+        opacity
       };
       setPreviewPath(preview);
     }
-  }, [isDrawing, activeTool, strokeColor, strokeWidth, startPoint, fillColor, getCoordinates]);
+  }, [isDrawing, activeTool, strokeColor, strokeWidth, startPoint, fillColor, opacity, getCoordinates]);
 
   const stopDrawing = useCallback(() => {
     if (!isDrawing || !startPoint) return;
     
-    if (previewPath && ['rectangle', 'circle', 'line'].includes(activeTool)) {
+    if (previewPath && ['rectangle', 'circle', 'line', 'arrow'].includes(activeTool)) {
       setPaths(prev => [...prev, { ...previewPath, id: Date.now().toString() }]);
       setPreviewPath(null);
     }
@@ -151,9 +165,42 @@ export default function SketchCanvas({
     [...paths, ...(previewPath ? [previewPath] : [])].forEach(path => {
       if (path.points.length === 0) return;
 
+      ctx.globalAlpha = path.opacity ?? 1;
       ctx.strokeStyle = path.color;
       ctx.lineWidth = path.strokeWidth;
-      ctx.globalCompositeOperation = path.tool === 'eraser' ? 'destination-out' : 'source-over';
+      ctx.setLineDash([]);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      if (path.tool === 'eraser') {
+        ctx.globalCompositeOperation = 'destination-out';
+      } else {
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      // Brush styles for pen
+      if (path.tool === 'pen' && path.brush) {
+        switch (path.brush) {
+          case 'pencil':
+            ctx.shadowColor = 'transparent';
+            break;
+          case 'marker':
+            ctx.shadowColor = path.color;
+            ctx.shadowBlur = 2;
+            break;
+          case 'highlighter':
+            ctx.globalAlpha = (path.opacity ?? 1) * 0.35;
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.lineCap = 'butt';
+            break;
+          case 'calligraphy':
+            ctx.lineCap = 'butt';
+            ctx.setLineDash([1, 0]);
+            break;
+        }
+      } else {
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
 
       if (path.tool === 'pen' || path.tool === 'eraser') {
         if (path.points.length < 2) return;
@@ -192,6 +239,31 @@ export default function SketchCanvas({
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+      } else if (path.tool === 'arrow') {
+        if (path.points.length < 2) return;
+        const [start, end] = path.points;
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+        // Draw arrowhead
+        const angle = Math.atan2(end.y - start.y, end.x - start.x);
+        const headLen = Math.max(8, path.strokeWidth * 2);
+        const arrowPoint1 = {
+          x: end.x - headLen * Math.cos(angle - Math.PI / 6),
+          y: end.y - headLen * Math.sin(angle - Math.PI / 6)
+        };
+        const arrowPoint2 = {
+          x: end.x - headLen * Math.cos(angle + Math.PI / 6),
+          y: end.y - headLen * Math.sin(angle + Math.PI / 6)
+        };
+        ctx.beginPath();
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
         ctx.stroke();
       }
     });
@@ -236,6 +308,46 @@ export default function SketchCanvas({
         onMouseLeave={stopDrawing}
         onWheel={handleWheel}
       />
+      {/* Text input overlay */}
+      {textInput && (
+        <textarea
+          className="absolute bg-transparent text-white outline-none resize-none"
+          style={{
+            left: `${(textInput.x * canvasState.scale) + canvasState.translateX}px`,
+            top: `${(textInput.y * canvasState.scale) + canvasState.translateY}px`,
+            fontSize: '18px',
+            minWidth: '120px',
+          }}
+          autoFocus
+          value={textInput.value}
+          onChange={(e) => setTextInput({ ...textInput, value: e.target.value })}
+          onBlur={() => {
+            if (textInput.value.trim()) {
+              const textPath: DrawingPath = {
+                id: Date.now().toString(),
+                tool: 'text',
+                points: [{ x: textInput.x, y: textInput.y }],
+                color: strokeColor,
+                strokeWidth: 1,
+                text: textInput.value,
+                fontSize: 18,
+                opacity,
+              };
+              setPaths(prev => [...prev, textPath]);
+            }
+            setTextInput(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+              (e.target as HTMLTextAreaElement).blur();
+            }
+            if (e.key === 'Escape') {
+              setTextInput(null);
+            }
+          }}
+          placeholder="Type... (Ctrl+Enter to commit)"
+        />
+      )}
       
       {/* Grid overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-10">
