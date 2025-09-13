@@ -2,15 +2,15 @@ import React from 'react';
 import IconButton from '../ui/IconButton';
 import { Tool } from '../types';
 
-interface VerticalToolbarProps {
+interface RightToolbarProps {
   activeTool: Tool;
   onToolChange: (tool: Tool) => void;
 }
 
-export default function VerticalToolbar({ activeTool, onToolChange }: VerticalToolbarProps) {
+export default function RightToolbar({ activeTool, onToolChange }: RightToolbarProps) {
   const tools = [
     { 
-      id: 'pen' as Tool, 
+      id: 'pen' as Tool,  
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -93,7 +93,7 @@ export default function VerticalToolbar({ activeTool, onToolChange }: VerticalTo
   }, [onToolChange]);
 
   return (
-    <div className="w-14 bg-zinc-900 border-l border-zinc-700 flex flex-col items-center py-4 gap-1">
+    <div className="w-14 border-l border-zinc-700 flex flex-col items-center py-4 gap-1">
       {tools.map(tool => (
         <IconButton
           key={tool.id}

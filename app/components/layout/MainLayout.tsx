@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback } from 'react';
-import VerticalToolbar from './VerticalToolbar';
+import RightToolbar from './RightToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
 import { Tool, DrawingPath, BrushType } from '../types';
 
@@ -82,7 +82,7 @@ export default function MainLayout() {
   }, [handleUndo, handleRedo]);
 
   return (
-    <div className="h-screen bg-zinc-900 text-white flex flex-row select-none">
+    <div className="h-screen  flex flex-row select-none">
       <div className="flex-1 relative">
         <SketchCanvas 
           activeTool={activeTool}
@@ -94,7 +94,7 @@ export default function MainLayout() {
           onPathsChange={handlePathsChange}
         />
       </div>
-      <VerticalToolbar 
+      <RightToolbar 
         activeTool={activeTool}
         onToolChange={setActiveTool}
       />
