@@ -1,9 +1,6 @@
 'use client';
 import React, { useState, useCallback } from 'react';
-import TopHeader from './TopHeader';
-import LeftSidebar from './LeftSidebar';
 import VerticalToolbar from './VerticalToolbar';
-import BottomToolbar from './BottomToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
 import { Tool, DrawingPath, BrushType } from '../types';
 
@@ -85,46 +82,22 @@ export default function MainLayout() {
   }, [handleUndo, handleRedo]);
 
   return (
-    <div className="h-screen bg-zinc-900 text-white flex flex-col select-none">
-      <TopHeader />
-      
-      <div className="flex-1 flex overflow-hidden">
-        <LeftSidebar />
-        <VerticalToolbar 
+    <div className="h-screen bg-zinc-900 text-white flex flex-row select-none">
+      <div className="flex-1 relative">
+        <SketchCanvas 
           activeTool={activeTool}
-          onToolChange={setActiveTool}
+          strokeColor={strokeColor}
+          strokeWidth={strokeWidth}
+          fillColor={fillColor}
+          brush={brush}
+          opacity={opacity}
+          onPathsChange={handlePathsChange}
         />
-        
-        <div className="flex-1 relative">
-          <SketchCanvas 
-            activeTool={activeTool}
-            strokeColor={strokeColor}
-            strokeWidth={strokeWidth}
-            fillColor={fillColor}
-            brush={brush}
-            opacity={opacity}
-            onPathsChange={handlePathsChange}
-          />
-          <BottomToolbar 
-            strokeColor={strokeColor}
-            fillColor={fillColor}
-            strokeWidth={strokeWidth}
-            onColorChange={setStrokeColor}
-            onFillColorChange={setFillColor}
-            onStrokeWidthChange={setStrokeWidth}
-            brush={brush}
-            onBrushChange={setBrush}
-            opacity={opacity}
-            onOpacityChange={setOpacity}
-            zoom={zoom}
-            onZoomChange={setZoom}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
-            canUndo={historyStep > 0}
-            canRedo={historyStep < history.length - 1}
-          />
-        </div>
       </div>
+      <VerticalToolbar 
+        activeTool={activeTool}
+        onToolChange={setActiveTool}
+      />
     </div>
   );
 }
