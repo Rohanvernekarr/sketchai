@@ -22,7 +22,7 @@ export default function IconButton({
   const baseClasses = "flex items-center justify-center transition-all duration-200 rounded relative group";
   const sizeClasses = size === 'sm' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
   const variantClasses = variant === 'solid' 
-    ? 'bg-zinc-700 hover:bg-zinc-600' 
+    ? 'bg-zinc-800 hover:bg-zinc-700' 
     : 'hover:bg-zinc-700';
   const activeClasses = active ? 'bg-blue-600 text-white hover:bg-blue-700' : 'text-zinc-300';
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
