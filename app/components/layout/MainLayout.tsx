@@ -82,7 +82,7 @@ export default function MainLayout() {
   }, [handleUndo, handleRedo]);
 
   return (
-    <div className="h-screen  flex flex-row select-none">
+    <div className="h-screen  flex flex-row select-none bg-white">
       <div className="flex-1 relative">
         <SketchCanvas 
           activeTool={activeTool}
