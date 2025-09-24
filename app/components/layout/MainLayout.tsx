@@ -2,64 +2,96 @@
 import React, { useState, useCallback } from 'react';
 import RightToolbar from './RightToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
-import { Tool, DrawingPath, BrushType } from '../types';
+import AIPrompt from '../ui/AIPrompt';
+import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, AIResponse } from '../types';
+import { geminiService } from '../services/geminiService';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function MainLayout() {
-  const [activeTool, setActiveTool] = useState<Tool>('pen');
+  const [activeTool, setActiveTool] = useState<Tool>('select');
   const [strokeColor, setStrokeColor] = useState('#ffffff');
   const [fillColor, setFillColor] = useState<string>('');
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [brush, setBrush] = useState<BrushType>('pencil');
   const [opacity, setOpacity] = useState<number>(1);
   const [zoom, setZoom] = useState(100);
-  const [history, setHistory] = useState<DrawingPath[][]>([]);
-  const [historyStep, setHistoryStep] = useState(-1);
-  const [paths, setPaths] = useState<DrawingPath[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [systemElements, setSystemElements] = useState<SystemElement[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [currentDiagram, setCurrentDiagram] = useState<DiagramData | null>(null);
 
-  // Handle undo
-  const handleUndo = useCallback(() => {
-    if (historyStep > 0) {
-      setHistoryStep(historyStep - 1);
-      setPaths(history[historyStep - 1]);
-    }
-  }, [history, historyStep]);
+  // Handle AI diagram generation
+  const handleAIGenerate = useCallback(async (prompt: string) => {
+    setIsGenerating(true);
+    try {
+      const response = await geminiService.generateSystemDesign(prompt);
+      
+      // Create system elements from AI response
+      const newElements: SystemElement[] = response.elements.map((el: any) => ({
+        id: uuidv4(),
+        type: el.type as 'database' | 'server' | 'cloud' | 'user' | 'api' | 'box',
+        position: el.position || { x: Math.random() * 400 + 100, y: Math.random() * 300 + 100 },
+        size: el.size || { width: 120, height: 80 },
+        text: el.label,
+        color: strokeColor,
+        fillColor: fillColor
+      }));
 
-  // Handle redo
-  const handleRedo = useCallback(() => {
-    if (historyStep < history.length - 1) {
-      setHistoryStep(historyStep + 1);
-      setPaths(history[historyStep + 1]);
-    }
-  }, [history, historyStep]);
+      // Create connections from AI response
+      const newConnections: Connection[] = response.connections.map((conn: any) => ({
+        id: uuidv4(),
+        from: newElements.find(el => el.text === conn.from)?.id || '',
+        to: newElements.find(el => el.text === conn.to)?.id || '',
+        label: conn.label,
+        type: conn.type || 'arrow'
+      }));
 
-  // Handle paths change to maintain history
-  const handlePathsChange = useCallback((newPaths: DrawingPath[]) => {
-    if (newPaths.length !== paths.length) {
-      const newHistory = history.slice(0, historyStep + 1);
-      newHistory.push([...newPaths]);
-      setHistory(newHistory);
-      setHistoryStep(newHistory.length - 1);
-      setPaths(newPaths);
+      setSystemElements(newElements);
+      setConnections(newConnections);
+      setCurrentDiagram({
+        elements: newElements,
+        connections: newConnections,
+        metadata: {
+          title: response.title,
+          description: response.description,
+          createdAt: new Date().toISOString(),
+          prompt: prompt
+        }
+      });
+    } catch (error) {
+      console.error('Error generating diagram:', error);
+    } finally {
+      setIsGenerating(false);
     }
-  }, [paths, history, historyStep]);
+  }, []);
+
+  // Handle system elements change
+  const handleElementsChange = useCallback((elements: SystemElement[]) => {
+    setSystemElements(elements);
+    if (currentDiagram) {
+      setCurrentDiagram({
+        ...currentDiagram,
+        elements
+      });
+    }
+  }, [currentDiagram]);
+
+  // Handle connections change
+  const handleConnectionsChange = useCallback((connections: Connection[]) => {
+    setConnections(connections);
+    if (currentDiagram) {
+      setCurrentDiagram({
+        ...currentDiagram,
+        connections
+      });
+    }
+  }, [currentDiagram]);
 
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
-          case 'z':
-            e.preventDefault();
-            if (e.shiftKey) {
-              handleRedo();
-            } else {
-              handleUndo();
-            }
-            break;
-          case 'y':
-            e.preventDefault();
-            handleRedo();
-            break;
           case '=':
           case '+':
             e.preventDefault();
@@ -79,20 +111,29 @@ export default function MainLayout() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleUndo, handleRedo]);
+  }, []);
 
   return (
-    <div className="h-screen  flex flex-row select-none bg-white">
+    <div className="h-screen flex flex-row select-none bg-white">
       <div className="flex-1 relative">
         <SketchCanvas 
           activeTool={activeTool}
           strokeColor={strokeColor}
           strokeWidth={strokeWidth}
           fillColor={fillColor}
-          brush={brush}
-          opacity={opacity}
-          onPathsChange={handlePathsChange}
+          systemElements={systemElements}
+          connections={connections}
+          onElementsChange={handleElementsChange}
+          onConnectionsChange={handleConnectionsChange}
         />
+        
+        {/* AI Prompt - Floating top center */}
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+          <AIPrompt 
+            onGenerate={handleAIGenerate}
+            isGenerating={isGenerating}
+          />
+        </div>
       </div>
       <RightToolbar 
         activeTool={activeTool}

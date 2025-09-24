@@ -8,61 +8,80 @@ interface RightToolbarProps {
 }
 
 export default function RightToolbar({ activeTool, onToolChange }: RightToolbarProps) {
-  const tools = [
+  const systemTools = [
     { 
-      id: 'pen' as Tool,  
+      id: 'select' as Tool,  
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
         </svg>
       ),
-      tooltip: 'Pen (P)'
+      tooltip: 'Select (V)'
     },
     { 
-      id: 'rectangle' as Tool, 
+      id: 'database' as Tool, 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeWidth={2}/>
+          <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+          <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
         </svg>
       ),
-      tooltip: 'Rectangle (R)'
+      tooltip: 'Database (D)'
     },
     { 
-      id: 'circle' as Tool, 
+      id: 'server' as Tool, 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" strokeWidth={2}/>
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth={2}/>
+          <line x1="8" y1="21" x2="16" y2="21" strokeWidth={2}/>
+          <line x1="12" y1="17" x2="12" y2="21" strokeWidth={2}/>
         </svg>
       ),
-      tooltip: 'Circle (O)'
+      tooltip: 'Server (S)'
     },
     { 
-      id: 'line' as Tool, 
+      id: 'cloud' as Tool, 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17L17 7M17 7H7M17 7V17" />
+          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" strokeWidth={2}/>
         </svg>
       ),
-      tooltip: 'Line (L)'
+      tooltip: 'Cloud (C)'
     },
     { 
-      id: 'text' as Tool, 
+      id: 'user' as Tool, 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4V2m0 18v-2m-8-8h2m16 0h-2M6.343 6.343l1.414 1.414M16.243 16.243l1.414 1.414M6.343 17.657l1.414-1.414M16.243 7.757l1.414-1.414" />
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeWidth={2}/>
+          <circle cx="12" cy="7" r="4" strokeWidth={2}/>
         </svg>
       ),
-      tooltip: 'Text (T)'
+      tooltip: 'User (U)'
     },
     { 
-      id: 'hand' as Tool, 
+      id: 'api' as Tool, 
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+          <path d="M9 12l2 2 4-4" strokeWidth={2}/>
+          <path d="M21 12c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z" strokeWidth={2}/>
+          <path d="M3 12c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z" strokeWidth={2}/>
+          <path d="M12 21c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z" strokeWidth={2}/>
+          <path d="M12 3c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z" strokeWidth={2}/>
         </svg>
       ),
-      tooltip: 'Hand (H)'
-    }
+      tooltip: 'API (A)'
+    },
+    { 
+      id: 'connector' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <line x1="17" y1="7" x2="7" y2="17" strokeWidth={2}/>
+          <polyline points="7,13 7,17 11,17" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Connector (L)'
+    },
   ];
 
   // Handle keyboard shortcuts
@@ -72,13 +91,12 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
       
       const keyMap: { [key: string]: Tool } = {
         'v': 'select',
-        'p': 'pen',
-        'r': 'rectangle',
-        'o': 'circle',
-        'l': 'line',
-        't': 'text',
-        'e': 'eraser',
-        'h': 'hand'
+        'd': 'database',
+        's': 'server',
+        'c': 'cloud',
+        'u': 'user',
+        'a': 'api',
+        'l': 'connector'
       };
       
       const tool = keyMap[e.key.toLowerCase()];
@@ -93,8 +111,9 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
   }, [onToolChange]);
 
   return (
-    <div className="w-14 border-l border-zinc-700 flex flex-col items-center py-4 gap-1">
-      {tools.map(tool => (
+    <div className="w-16 border-l border-zinc-700 flex flex-col items-center py-4 gap-2 bg-zinc-800">
+      <div className="text-xs text-zinc-400 font-semibold mb-2">System Tools</div>
+      {systemTools.map(tool => (
         <IconButton
           key={tool.id}
           icon={tool.icon}
