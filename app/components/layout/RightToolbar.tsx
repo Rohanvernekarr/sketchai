@@ -111,18 +111,48 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
   }, [onToolChange]);
 
   return (
-    <div className="w-16 border-l border-zinc-700 flex flex-col items-center py-4 gap-2 bg-zinc-800">
-      <div className="text-xs text-zinc-400 font-semibold mb-2">System Tools</div>
-      {systemTools.map(tool => (
-        <IconButton
-          key={tool.id}
-          icon={tool.icon}
-          active={activeTool === tool.id}
-          onClick={() => onToolChange(tool.id)}
-          size="sm"
-          tooltip={tool.tooltip}
-        />
-      ))}
+    <div className="w-20 bg-gradient-to-b from-slate-900/80 to-slate-800/80 border-l border-indigo-500/20 backdrop-blur-sm">
+      {/* Toolbar header */}
+      <div className="p-4 border-b border-slate-700/50">
+        <div className="text-xs font-semibold text-indigo-300 text-center">
+          Design Tools
+        </div>
+        <div className="w-8 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 mx-auto mt-2 rounded-full"></div>
+      </div>
+      
+      {/* Tool buttons */}
+      <div className="flex flex-col items-center py-6 space-y-4">
+        {systemTools.map((tool, index) => (
+          <div key={tool.id} className="relative group">
+            {/* Animated background indicator */}
+            {activeTool === tool.id && (
+              <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-xl blur-sm animate-pulse-glow"></div>
+            )}
+            
+            <IconButton
+              icon={tool.icon}
+              active={activeTool === tool.id}
+              onClick={() => onToolChange(tool.id)}
+              tooltip={tool.tooltip}
+              size="sm"
+            />
+            
+            {/* Tool indicator line */}
+            {activeTool === tool.id && (
+              <div className="absolute -left-3 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-indigo-400 to-purple-600 rounded-r-full shadow-lg shadow-indigo-500/50"></div>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {/* Keyboard shortcuts hint */}
+      <div className="absolute bottom-4 left-0 right-0 px-2">
+        <div className="text-xs text-slate-500 text-center leading-tight">
+          <div className="bg-slate-800/50 rounded-lg p-2 backdrop-blur-sm border border-slate-700/30">
+            Press keys to<br/>switch tools
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

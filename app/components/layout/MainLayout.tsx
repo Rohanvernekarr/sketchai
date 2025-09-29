@@ -114,31 +114,60 @@ export default function MainLayout() {
   }, []);
 
   return (
-    <div className="h-screen flex flex-row select-none bg-white">
-      <div className="flex-1 relative">
-        <SketchCanvas 
-          activeTool={activeTool}
-          strokeColor={strokeColor}
-          strokeWidth={strokeWidth}
-          fillColor={fillColor}
-          systemElements={systemElements}
-          connections={connections}
-          onElementsChange={handleElementsChange}
-          onConnectionsChange={handleConnectionsChange}
-        />
-        
-        {/* AI Prompt - Floating top center */}
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-          <AIPrompt 
-            onGenerate={handleAIGenerate}
-            isGenerating={isGenerating}
-          />
-        </div>
-      </div>
-      <RightToolbar 
-        activeTool={activeTool}
-        onToolChange={setActiveTool}
+    <div className="h-screen flex flex-col select-none overflow-hidden">
+      {/* AI Prompt at top */}
+      <AIPrompt 
+        onGenerate={handleAIGenerate}
+        isGenerating={isGenerating}
       />
+      
+      {/* Main content area */}
+      <div className="flex-1 flex flex-row relative">
+        {/* Canvas area */}
+        <div className="flex-1 relative overflow-hidden">
+          <SketchCanvas 
+            activeTool={activeTool}
+            strokeColor={strokeColor}
+            strokeWidth={strokeWidth}
+            fillColor={fillColor}
+            systemElements={systemElements}
+            connections={connections}
+            onElementsChange={handleElementsChange}
+            onConnectionsChange={handleConnectionsChange}
+          />
+          
+          {/* Floating status info */}
+          <div className="absolute bottom-6 left-6 z-10">
+            <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 border border-slate-600/30 shadow-xl">
+              <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-slate-300">
+                    {systemElements.length} elements
+                  </span>
+                </div>
+                <div className="w-px h-4 bg-slate-600"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  <span className="text-slate-300">
+                    {connections.length} connections
+                  </span>
+                </div>
+                <div className="w-px h-4 bg-slate-600"></div>
+                <div className="text-slate-400">
+                  Zoom: {zoom}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right toolbar */}
+        <RightToolbar 
+          activeTool={activeTool}
+          onToolChange={setActiveTool}
+        />
+      </div>
     </div>
   );
 }
