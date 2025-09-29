@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import RightToolbar from './RightToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
 import AIPrompt from '../ui/AIPrompt';
@@ -28,6 +28,7 @@ export default function MainLayout() {
   // History management
   const [history, setHistory] = useState<HistoryState[]>([{ elements: [], connections: [] }]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle AI diagram generation
   const handleAIGenerate = useCallback(async (prompt: string) => {
@@ -85,37 +86,18 @@ export default function MainLayout() {
     }
   }, [strokeColor, fillColor, history, historyIndex]);
 
-  // Save current state to history
-  const saveToHistory = useCallback(() => {
-    const newState: HistoryState = {
-      elements: [...systemElements],
-      connections: [...connections]
-    };
-    
-    // Remove future history if we're not at the end
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(newState);
-    
-    // Limit history to 50 states
-    if (newHistory.length > 50) {
-      newHistory.shift();
-    } else {
-      setHistoryIndex(newHistory.length - 1);
-    }
-    
-    setHistory(newHistory);
-  }, [systemElements, connections, history, historyIndex]);
-
   // Undo function
   const handleUndo = useCallback(() => {
     if (historyIndex > 0) {
       const newIndex = historyIndex - 1;
       const previousState = history[newIndex];
       
+      // Update state without triggering history save
       setSystemElements(previousState.elements);
       setConnections(previousState.connections);
       setHistoryIndex(newIndex);
       
+      // Update current diagram
       if (currentDiagram) {
         setCurrentDiagram({
           ...currentDiagram,
@@ -123,6 +105,9 @@ export default function MainLayout() {
           connections: previousState.connections
         });
       }
+      
+      // Manually trigger re-render by updating handlers
+      // The canvas will re-render automatically due to systemElements/connections props change
     }
   }, [historyIndex, history, currentDiagram]);
 
@@ -163,14 +148,52 @@ export default function MainLayout() {
 
   // Save to history when elements or connections change
   React.useEffect(() => {
-    if (systemElements.length > 0 || connections.length > 0) {
-      const timeoutId = setTimeout(() => {
-        saveToHistory();
-      }, 1000); // Save after 1 second of inactivity
-      
-      return () => clearTimeout(timeoutId);
+    // Clear any existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
-  }, [systemElements, connections, saveToHistory]);
+    
+    // Don't save empty initial state
+    if (systemElements.length === 0 && connections.length === 0 && history.length === 1) {
+      return;
+    }
+    
+    // Save after 1 second of inactivity
+    saveTimeoutRef.current = setTimeout(() => {
+      const newState: HistoryState = {
+        elements: [...systemElements],
+        connections: [...connections]
+      };
+      
+      // Don't save if state hasn't changed
+      const currentState = history[historyIndex];
+      if (currentState && 
+          JSON.stringify(currentState.elements) === JSON.stringify(newState.elements) &&
+          JSON.stringify(currentState.connections) === JSON.stringify(newState.connections)) {
+        return;
+      }
+      
+      // Remove future history if we're not at the end
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(newState);
+      
+      // Limit history to 50 states
+      if (newHistory.length > 50) {
+        newHistory.shift();
+        setHistoryIndex(newHistory.length - 1);
+      } else {
+        setHistoryIndex(newHistory.length - 1);
+      }
+      
+      setHistory(newHistory);
+    }, 1000);
+    
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [systemElements, connections, history, historyIndex]);
 
   // Keyboard shortcuts
   React.useEffect(() => {
