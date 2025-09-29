@@ -7,6 +7,11 @@ import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, A
 import { geminiService } from '../services/geminiService';
 import { v4 as uuidv4 } from 'uuid';
 
+interface HistoryState {
+  elements: SystemElement[];
+  connections: Connection[];
+}
+
 export default function MainLayout() {
   const [activeTool, setActiveTool] = useState<Tool>('select');
   const [strokeColor, setStrokeColor] = useState('#ffffff');
@@ -19,6 +24,10 @@ export default function MainLayout() {
   const [systemElements, setSystemElements] = useState<SystemElement[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [currentDiagram, setCurrentDiagram] = useState<DiagramData | null>(null);
+  
+  // History management
+  const [history, setHistory] = useState<HistoryState[]>([{ elements: [], connections: [] }]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
   // Handle AI diagram generation
   const handleAIGenerate = useCallback(async (prompt: string) => {
@@ -58,12 +67,77 @@ export default function MainLayout() {
           prompt: prompt
         }
       });
+      
+      // Save to history
+      setTimeout(() => {
+        const newState: HistoryState = {
+          elements: newElements,
+          connections: newConnections
+        };
+        const newHistory = [...history.slice(0, historyIndex + 1), newState];
+        setHistory(newHistory);
+        setHistoryIndex(newHistory.length - 1);
+      }, 100);
     } catch (error) {
       console.error('Error generating diagram:', error);
     } finally {
       setIsGenerating(false);
     }
-  }, []);
+  }, [strokeColor, fillColor, history, historyIndex]);
+
+  // Save current state to history
+  const saveToHistory = useCallback(() => {
+    const newState: HistoryState = {
+      elements: [...systemElements],
+      connections: [...connections]
+    };
+    
+    // Remove future history if we're not at the end
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newState);
+    
+    // Limit history to 50 states
+    if (newHistory.length > 50) {
+      newHistory.shift();
+    } else {
+      setHistoryIndex(newHistory.length - 1);
+    }
+    
+    setHistory(newHistory);
+  }, [systemElements, connections, history, historyIndex]);
+
+  // Undo function
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      const previousState = history[newIndex];
+      
+      setSystemElements(previousState.elements);
+      setConnections(previousState.connections);
+      setHistoryIndex(newIndex);
+      
+      if (currentDiagram) {
+        setCurrentDiagram({
+          ...currentDiagram,
+          elements: previousState.elements,
+          connections: previousState.connections
+        });
+      }
+    }
+  }, [historyIndex, history, currentDiagram]);
+
+  // Clear all function
+  const handleClear = useCallback(() => {
+    setSystemElements([]);
+    setConnections([]);
+    setCurrentDiagram(null);
+    
+    // Save clear state to history
+    const clearState: HistoryState = { elements: [], connections: [] };
+    const newHistory = [...history.slice(0, historyIndex + 1), clearState];
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  }, [history, historyIndex]);
 
   // Handle system elements change
   const handleElementsChange = useCallback((elements: SystemElement[]) => {
@@ -87,11 +161,26 @@ export default function MainLayout() {
     }
   }, [currentDiagram]);
 
+  // Save to history when elements or connections change
+  React.useEffect(() => {
+    if (systemElements.length > 0 || connections.length > 0) {
+      const timeoutId = setTimeout(() => {
+        saveToHistory();
+      }, 1000); // Save after 1 second of inactivity
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [systemElements, connections, saveToHistory]);
+
   // Keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
+          case 'z':
+            e.preventDefault();
+            handleUndo();
+            break;
           case '=':
           case '+':
             e.preventDefault();
@@ -111,7 +200,7 @@ export default function MainLayout() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [handleUndo]);
 
   return (
     <div className="h-screen flex flex-col select-none overflow-hidden">
@@ -136,28 +225,36 @@ export default function MainLayout() {
             onConnectionsChange={handleConnectionsChange}
           />
           
-          {/* Floating status info */}
-          <div className="absolute bottom-6 left-6 z-10">
-            <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 border border-slate-600/30 shadow-xl">
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-slate-300">
-                    {systemElements.length} elements
-                  </span>
-                </div>
-                <div className="w-px h-4 bg-slate-600"></div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                  <span className="text-slate-300">
-                    {connections.length} connections
-                  </span>
-                </div>
-                <div className="w-px h-4 bg-slate-600"></div>
-                <div className="text-slate-400">
-                  Zoom: {zoom}%
-                </div>
-              </div>
+          {/* Action buttons */}
+          <div className="absolute top-4 right-4 z-10 flex gap-2">
+            <button
+              onClick={handleUndo}
+              disabled={historyIndex <= 0}
+              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              title="Undo (Ctrl+Z)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+              Undo
+            </button>
+            <button
+              onClick={handleClear}
+              disabled={systemElements.length === 0 && connections.length === 0}
+              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              title="Clear All"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Clear
+            </button>
+          </div>
+
+          {/* Simple status info */}
+          <div className="absolute bottom-4 left-4 z-10">
+            <div className="bg-black border border-white rounded p-2 text-white text-xs">
+              Elements: {systemElements.length} | Connections: {connections.length} | History: {historyIndex + 1}/{history.length}
             </div>
           </div>
         </div>
