@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Point, SystemElement, Connection, Tool } from '../types';
+import { Point, SystemElement, Connection, Tool, DrawingPath, FreehandStroke } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SketchCanvasProps {
@@ -12,6 +12,8 @@ interface SketchCanvasProps {
   connections?: Connection[];
   onElementsChange?: (elements: SystemElement[]) => void;
   onConnectionsChange?: (connections: Connection[]) => void;
+  freehandStrokes?: FreehandStroke[];
+  onFreehandStrokesChange?: (strokes: FreehandStroke[]) => void;
 }
 
 export default function SketchCanvas({
@@ -22,7 +24,9 @@ export default function SketchCanvas({
   systemElements = [],
   connections = [],
   onElementsChange,
-  onConnectionsChange
+  onConnectionsChange,
+  freehandStrokes = [],
+  onFreehandStrokesChange
 }: SketchCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
@@ -30,6 +34,11 @@ export default function SketchCanvas({
   const [dragOffset, setDragOffset] = useState<Point>({ x: 0, y: 0 });
   const [editingElement, setEditingElement] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  
+  // Freehand drawing state
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
+  const [currentShape, setCurrentShape] = useState<{ start: Point; current: Point } | null>(null);
 
   // Initialize canvas
   useEffect(() => {
@@ -253,6 +262,142 @@ export default function SketchCanvas({
     ctx.setLineDash([]);
   }, [systemElements]);
 
+  // Draw freehand stroke
+  const drawFreehandStroke = useCallback((ctx: CanvasRenderingContext2D, stroke: FreehandStroke) => {
+    if (stroke.points.length < 2) return;
+
+    ctx.save();
+    ctx.strokeStyle = stroke.color;
+    ctx.lineWidth = stroke.strokeWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.globalAlpha = stroke.opacity || 1;
+
+    // If it's a shape, draw the shape
+    if (stroke.shape && ['rectangle', 'circle', 'triangle'].includes(stroke.shape)) {
+      const start = stroke.points[0];
+      const end = stroke.points[1];
+      const width = end.x - start.x;
+      const height = end.y - start.y;
+
+      switch (stroke.shape) {
+        case 'rectangle':
+          ctx.strokeRect(start.x, start.y, width, height);
+          break;
+        case 'circle':
+          const centerX = start.x + width / 2;
+          const centerY = start.y + height / 2;
+          const radius = Math.sqrt(width * width + height * height) / 2;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+          ctx.stroke();
+          break;
+        case 'triangle':
+          ctx.beginPath();
+          ctx.moveTo(start.x + width / 2, start.y); // Top point
+          ctx.lineTo(start.x, end.y); // Bottom left
+          ctx.lineTo(end.x, end.y); // Bottom right
+          ctx.closePath();
+          ctx.stroke();
+          break;
+      }
+      ctx.restore();
+      return;
+    }
+
+    // Otherwise draw as a regular freehand stroke
+    ctx.beginPath();
+    ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+    
+    for (let i = 1; i < stroke.points.length; i++) {
+      ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+    }
+    
+    ctx.stroke();
+    ctx.restore();
+  }, []);
+
+  // Draw freehand shape
+  const drawFreehandShape = useCallback((ctx: CanvasRenderingContext2D, start: Point, end: Point, shapeType: string) => {
+    ctx.save();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeWidth;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    const width = end.x - start.x;
+    const height = end.y - start.y;
+
+    switch (shapeType) {
+      case 'rectangle':
+        ctx.strokeRect(start.x, start.y, width, height);
+        if (fillColor) {
+          ctx.fillStyle = fillColor;
+          ctx.fillRect(start.x, start.y, width, height);
+        }
+        break;
+
+      case 'circle':
+        const radius = Math.sqrt(width * width + height * height) / 2;
+        const centerX = start.x + width / 2;
+        const centerY = start.y + height / 2;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
+        if (fillColor) {
+          ctx.fillStyle = fillColor;
+          ctx.fill();
+        }
+        ctx.stroke();
+        break;
+
+      case 'triangle':
+        ctx.beginPath();
+        ctx.moveTo(start.x + width / 2, start.y);
+        ctx.lineTo(start.x, end.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.closePath();
+        if (fillColor) {
+          ctx.fillStyle = fillColor;
+          ctx.fill();
+        }
+        ctx.stroke();
+        break;
+
+      case 'line':
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+        break;
+
+      case 'arrow':
+        // Draw line
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+        
+        // Draw arrowhead
+        const angle = Math.atan2(end.y - start.y, end.x - start.x);
+        const arrowLength = 15;
+        ctx.beginPath();
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(
+          end.x - arrowLength * Math.cos(angle - Math.PI / 6),
+          end.y - arrowLength * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.moveTo(end.x, end.y);
+        ctx.lineTo(
+          end.x - arrowLength * Math.cos(angle + Math.PI / 6),
+          end.y - arrowLength * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.stroke();
+        break;
+    }
+
+    ctx.restore();
+  }, [strokeColor, strokeWidth, fillColor]);
+
   // Render canvas
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -283,12 +428,59 @@ export default function SketchCanvas({
     // Draw connections first
     connections.forEach(connection => drawConnection(ctx, connection));
 
+    // Draw freehand strokes
+    freehandStrokes.forEach(stroke => drawFreehandStroke(ctx, stroke));
+
+    // Draw current stroke being drawn
+    if (isDrawing && currentStroke.length > 1 && activeTool === 'pen') {
+      const tempStroke: FreehandStroke = {
+        id: 'temp',
+        points: currentStroke,
+        color: strokeColor,
+        strokeWidth: strokeWidth
+      };
+      drawFreehandStroke(ctx, tempStroke);
+    }
+
+    // Draw current shape being drawn
+    if (currentShape && ['rectangle', 'circle', 'triangle'].includes(activeTool)) {
+      drawFreehandShape(ctx, currentShape.start, currentShape.current, activeTool);
+    }
+
     // Draw elements
     systemElements.forEach(element => drawElement(ctx, element));
-  }, [systemElements, connections, drawElement, drawConnection]);
+  }, [systemElements, connections, freehandStrokes, drawElement, drawConnection, drawFreehandStroke, drawFreehandShape, isDrawing, currentStroke, currentShape, activeTool, strokeColor, strokeWidth]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const point = getCoordinates(e);
+
+    // Freehand drawing
+    if (activeTool === 'pen') {
+      setIsDrawing(true);
+      setCurrentStroke([point]);
+      return;
+    }
+
+    // Shape drawing
+    if (['rectangle', 'circle', 'triangle'].includes(activeTool)) {
+      setCurrentShape({ start: point, current: point });
+      setIsDrawing(true);
+      return;
+    }
+
+    // Eraser
+    if (activeTool === 'eraser') {
+      // Find and remove strokes that intersect with the eraser point
+      const newStrokes = freehandStrokes.filter(stroke => {
+        return !stroke.points.some(p => 
+          Math.sqrt((p.x - point.x) ** 2 + (p.y - point.y) ** 2) < strokeWidth
+        );
+      });
+      if (onFreehandStrokesChange) {
+        onFreehandStrokesChange(newStrokes);
+      }
+      return;
+    }
 
     if (activeTool === 'select') {
       // Check if clicking on an element
@@ -340,11 +532,38 @@ export default function SketchCanvas({
         onElementsChange([...systemElements.map(el => ({ ...el, selected: false })), newElement]);
       }
     }
-  }, [activeTool, systemElements, strokeColor, getCoordinates, onElementsChange]);
+  }, [activeTool, systemElements, strokeColor, strokeWidth, freehandStrokes, onFreehandStrokesChange, getCoordinates, onElementsChange]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    const point = getCoordinates(e);
+
+    // Freehand drawing
+    if (isDrawing && activeTool === 'pen') {
+      setCurrentStroke(prev => [...prev, point]);
+      return;
+    }
+
+    // Shape drawing
+    if (isDrawing && currentShape && ['rectangle', 'circle', 'triangle'].includes(activeTool)) {
+      setCurrentShape(prev => prev ? { ...prev, current: point } : null);
+      return;
+    }
+
+    // Eraser (continuous erasing while mouse is down)
+    if (activeTool === 'eraser' && isDrawing) {
+      const newStrokes = freehandStrokes.filter(stroke => {
+        return !stroke.points.some(p => 
+          Math.sqrt((p.x - point.x) ** 2 + (p.y - point.y) ** 2) < strokeWidth
+        );
+      });
+      if (onFreehandStrokesChange) {
+        onFreehandStrokesChange(newStrokes);
+      }
+      return;
+    }
+
+    // Element dragging
     if (dragging && selectedElement && onElementsChange) {
-      const point = getCoordinates(e);
       const newPosition = {
         x: point.x - dragOffset.x,
         y: point.y - dragOffset.y
@@ -356,11 +575,45 @@ export default function SketchCanvas({
           : el
       ));
     }
-  }, [dragging, selectedElement, dragOffset, getCoordinates, systemElements, onElementsChange]);
+  }, [isDrawing, activeTool, currentShape, freehandStrokes, strokeWidth, onFreehandStrokesChange, dragging, selectedElement, dragOffset, getCoordinates, systemElements, onElementsChange]);
 
   const handleMouseUp = useCallback(() => {
+    // Finish freehand drawing
+    if (isDrawing && activeTool === 'pen' && currentStroke.length > 1) {
+      const newStroke: FreehandStroke = {
+        id: uuidv4(),
+        points: [...currentStroke],
+        color: strokeColor,
+        strokeWidth: strokeWidth
+      };
+      
+      if (onFreehandStrokesChange) {
+        onFreehandStrokesChange([...freehandStrokes, newStroke]);
+      }
+      
+      setCurrentStroke([]);
+    }
+
+    // Finish shape drawing
+    if (isDrawing && currentShape && ['rectangle', 'circle', 'triangle'].includes(activeTool)) {
+      const newStroke: FreehandStroke = {
+        id: uuidv4(),
+        points: [currentShape.start, currentShape.current],
+        color: strokeColor,
+        strokeWidth: strokeWidth,
+        shape: activeTool // Add shape type for proper rendering
+      };
+      
+      if (onFreehandStrokesChange) {
+        onFreehandStrokesChange([...freehandStrokes, newStroke]);
+      }
+      
+      setCurrentShape(null);
+    }
+
+    setIsDrawing(false);
     setDragging(false);
-  }, []);
+  }, [isDrawing, activeTool, currentStroke, currentShape, strokeColor, strokeWidth, onFreehandStrokesChange, freehandStrokes]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     const point = getCoordinates(e);

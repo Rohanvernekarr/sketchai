@@ -3,6 +3,7 @@ export type Tool =
   | 'pen' 
   | 'rectangle' 
   | 'circle' 
+  | 'triangle'
   | 'arrow' 
   | 'text' 
   | 'eraser' 
@@ -13,7 +14,8 @@ export type Tool =
   | 'cloud'
   | 'user'
   | 'api'
-  | 'connector';
+  | 'connector'
+  | 'freehand';
 
 export interface Point {
   x: number;
@@ -37,6 +39,23 @@ export interface DrawingPath {
   align?: 'left' | 'center' | 'right';
   // Brush style for pen tool
   brush?: BrushType;
+  // Shape properties for freehand shapes
+  shapeType?: 'rectangle' | 'circle' | 'triangle' | 'line' | 'arrow';
+  startPoint?: Point;
+  endPoint?: Point;
+  // For smooth curves
+  smoothed?: boolean;
+}
+
+// Freehand drawing stroke
+export interface FreehandStroke {
+  id: string;
+  points: Point[];
+  color: string;
+  strokeWidth: number;
+  opacity?: number;
+  brush?: BrushType;
+  shape?: Tool; // For geometric shapes like rectangle, circle, triangle
 }
 
 // System Design Elements

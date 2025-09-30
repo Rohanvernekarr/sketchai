@@ -3,13 +3,14 @@ import React, { useState, useCallback, useRef } from 'react';
 import RightToolbar from './RightToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
 import AIPrompt from '../ui/AIPrompt';
-import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, AIResponse } from '../types';
+import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, AIResponse, FreehandStroke } from '../types';
 import { geminiService } from '../services/geminiService';
 import { v4 as uuidv4 } from 'uuid';
 
 interface HistoryState {
   elements: SystemElement[];
   connections: Connection[];
+  freehandStrokes: FreehandStroke[];
 }
 
 export default function MainLayout() {
@@ -21,12 +22,14 @@ export default function MainLayout() {
   const [opacity, setOpacity] = useState<number>(1);
   const [zoom, setZoom] = useState(100);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isAIPromptOpen, setIsAIPromptOpen] = useState(false);
   const [systemElements, setSystemElements] = useState<SystemElement[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
+  const [freehandStrokes, setFreehandStrokes] = useState<FreehandStroke[]>([]);
   const [currentDiagram, setCurrentDiagram] = useState<DiagramData | null>(null);
   
   // History management
-  const [history, setHistory] = useState<HistoryState[]>([{ elements: [], connections: [] }]);
+  const [history, setHistory] = useState<HistoryState[]>([{ elements: [], connections: [], freehandStrokes: [] }]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -73,7 +76,8 @@ export default function MainLayout() {
       setTimeout(() => {
         const newState: HistoryState = {
           elements: newElements,
-          connections: newConnections
+          connections: newConnections,
+          freehandStrokes: []
         };
         const newHistory = [...history.slice(0, historyIndex + 1), newState];
         setHistory(newHistory);
@@ -95,6 +99,7 @@ export default function MainLayout() {
       // Update state without triggering history save
       setSystemElements(previousState.elements);
       setConnections(previousState.connections);
+      setFreehandStrokes(previousState.freehandStrokes);
       setHistoryIndex(newIndex);
       
       // Update current diagram
@@ -115,10 +120,11 @@ export default function MainLayout() {
   const handleClear = useCallback(() => {
     setSystemElements([]);
     setConnections([]);
+    setFreehandStrokes([]);
     setCurrentDiagram(null);
     
     // Save clear state to history
-    const clearState: HistoryState = { elements: [], connections: [] };
+    const clearState: HistoryState = { elements: [], connections: [], freehandStrokes: [] };
     const newHistory = [...history.slice(0, historyIndex + 1), clearState];
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
@@ -134,6 +140,11 @@ export default function MainLayout() {
       });
     }
   }, [currentDiagram]);
+
+  // Handle freehand strokes change
+  const handleFreehandStrokesChange = useCallback((strokes: FreehandStroke[]) => {
+    setFreehandStrokes(strokes);
+  }, []);
 
   // Handle connections change
   const handleConnectionsChange = useCallback((connections: Connection[]) => {
@@ -154,7 +165,7 @@ export default function MainLayout() {
     }
     
     // Don't save empty initial state
-    if (systemElements.length === 0 && connections.length === 0 && history.length === 1) {
+    if (systemElements.length === 0 && connections.length === 0 && freehandStrokes.length === 0 && history.length === 1) {
       return;
     }
     
@@ -162,14 +173,16 @@ export default function MainLayout() {
     saveTimeoutRef.current = setTimeout(() => {
       const newState: HistoryState = {
         elements: [...systemElements],
-        connections: [...connections]
+        connections: [...connections],
+        freehandStrokes: [...freehandStrokes]
       };
       
       // Don't save if state hasn't changed
       const currentState = history[historyIndex];
       if (currentState && 
           JSON.stringify(currentState.elements) === JSON.stringify(newState.elements) &&
-          JSON.stringify(currentState.connections) === JSON.stringify(newState.connections)) {
+          JSON.stringify(currentState.connections) === JSON.stringify(newState.connections) &&
+          JSON.stringify(currentState.freehandStrokes) === JSON.stringify(newState.freehandStrokes)) {
         return;
       }
       
@@ -193,7 +206,7 @@ export default function MainLayout() {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [systemElements, connections, history, historyIndex]);
+  }, [systemElements, connections, freehandStrokes, history, historyIndex]);
 
   // Keyboard shortcuts
   React.useEffect(() => {
@@ -203,6 +216,10 @@ export default function MainLayout() {
           case 'z':
             e.preventDefault();
             handleUndo();
+            break;
+          case 'g':
+            e.preventDefault();
+            setIsAIPromptOpen(true);
             break;
           case '=':
           case '+':
@@ -226,13 +243,7 @@ export default function MainLayout() {
   }, [handleUndo]);
 
   return (
-    <div className="h-screen flex flex-col select-none overflow-hidden">
-      {/* AI Prompt at top */}
-      <AIPrompt 
-        onGenerate={handleAIGenerate}
-        isGenerating={isGenerating}
-      />
-      
+    <div className="h-screen flex flex-row select-none overflow-hidden">
       {/* Main content area */}
       <div className="flex-1 flex flex-row relative">
         {/* Canvas area */}
@@ -244,12 +255,24 @@ export default function MainLayout() {
             fillColor={fillColor}
             systemElements={systemElements}
             connections={connections}
+            freehandStrokes={freehandStrokes}
             onElementsChange={handleElementsChange}
             onConnectionsChange={handleConnectionsChange}
+            onFreehandStrokesChange={handleFreehandStrokesChange}
           />
           
           {/* Action buttons */}
           <div className="absolute top-4 right-4 z-10 flex gap-2">
+            <button
+              onClick={() => setIsAIPromptOpen(true)}
+              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors flex items-center gap-1"
+              title="Generate with AI (Ctrl+G)"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AI Generate
+            </button>
             <button
               onClick={handleUndo}
               disabled={historyIndex <= 0}
@@ -263,7 +286,7 @@ export default function MainLayout() {
             </button>
             <button
               onClick={handleClear}
-              disabled={systemElements.length === 0 && connections.length === 0}
+              disabled={systemElements.length === 0 && connections.length === 0 && freehandStrokes.length === 0}
               className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               title="Clear All"
             >
@@ -277,7 +300,7 @@ export default function MainLayout() {
           {/* Simple status info */}
           <div className="absolute bottom-4 left-4 z-10">
             <div className="bg-black border border-white rounded p-2 text-white text-xs">
-              Elements: {systemElements.length} | Connections: {connections.length} | History: {historyIndex + 1}/{history.length}
+              Elements: {systemElements.length} | Connections: {connections.length} | Strokes: {freehandStrokes.length} | History: {historyIndex + 1}/{history.length}
             </div>
           </div>
         </div>
@@ -288,6 +311,14 @@ export default function MainLayout() {
           onToolChange={setActiveTool}
         />
       </div>
+      
+      {/* AI Prompt Popup */}
+      <AIPrompt 
+        onGenerate={handleAIGenerate}
+        isGenerating={isGenerating}
+        isOpen={isAIPromptOpen}
+        onClose={() => setIsAIPromptOpen(false)}
+      />
     </div>
   );
 }

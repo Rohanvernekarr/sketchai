@@ -84,6 +84,58 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     },
   ];
 
+  const freehandTools = [
+    { 
+      id: 'pen' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 19l7-7 3 3-7 7-3-3z" strokeWidth={2}/>
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" strokeWidth={2}/>
+          <path d="M2 2l7.586 7.586" strokeWidth={2}/>
+          <circle cx="11" cy="11" r="2" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Pen (P)'
+    },
+    { 
+      id: 'eraser' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M20 20H7l-7-7 7-7h13v14z" strokeWidth={2}/>
+          <path d="M7 20V6" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Eraser (E)'
+    },
+    { 
+      id: 'rectangle' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Rectangle (R)'
+    },
+    { 
+      id: 'circle' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Circle (O)'
+    },
+    { 
+      id: 'triangle' as Tool, 
+      icon: (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2l10 20H2z" strokeWidth={2}/>
+        </svg>
+      ),
+      tooltip: 'Triangle (T)'
+    },
+  ];
+
   // Handle keyboard shortcuts
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -96,7 +148,12 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
         'c': 'cloud',
         'u': 'user',
         'a': 'api',
-        'l': 'connector'
+        'l': 'connector',
+        'p': 'pen',
+        'e': 'eraser',
+        'r': 'rectangle',
+        'o': 'circle',
+        't': 'triangle'
       };
       
       const tool = keyMap[e.key.toLowerCase()];
@@ -112,8 +169,22 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
 
   return (
     <div className="w-16 border-l border-white flex flex-col items-center py-4 gap-2 bg-black">
-      <div className="text-xs text-white font-semibold mb-2">Tools</div>
+      <div className="text-xs text-white font-semibold mb-2">System</div>
       {systemTools.map(tool => (
+        <IconButton
+          key={tool.id}
+          icon={tool.icon}
+          active={activeTool === tool.id}
+          onClick={() => onToolChange(tool.id)}
+          size="sm"
+          tooltip={tool.tooltip}
+        />
+      ))}
+      
+      <div className="w-full h-px bg-white/20 my-2" />
+      
+      <div className="text-xs text-white font-semibold mb-2">Draw</div>
+      {freehandTools.map(tool => (
         <IconButton
           key={tool.id}
           icon={tool.icon}
