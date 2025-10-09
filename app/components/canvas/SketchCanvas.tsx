@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Point, SystemElement, Connection, Tool, DrawingPath, FreehandStroke } from '../types';
+import { Point, SystemElement, Connection, Tool, FreehandStroke } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface SketchCanvasProps {
