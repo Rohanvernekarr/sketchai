@@ -70,6 +70,7 @@ export interface SystemElement {
   fontSize?: number;
   selected?: boolean;
   connections?: string[]; // connection ids
+  
 }
 
 export interface Connection {
@@ -114,6 +115,18 @@ export interface CanvasState {
   scale: number;
   translateX: number;
   translateY: number;
+}
+export interface SketchCanvasProps {
+  activeTool: Tool;
+  strokeColor: string;
+  strokeWidth: number;
+  fillColor?: string;
+  systemElements?: SystemElement[];
+  connections?: Connection[];
+  onElementsChange?: (elements: SystemElement[]) => void;
+  onConnectionsChange?: (connections: Connection[]) => void;
+  freehandStrokes?: FreehandStroke[];
+  onFreehandStrokesChange?: (strokes: FreehandStroke[]) => void;
 }
 
 export type BrushType = 'pencil' | 'marker' | 'highlighter' | 'calligraphy';
