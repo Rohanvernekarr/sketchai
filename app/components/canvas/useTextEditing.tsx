@@ -61,13 +61,13 @@ export function useTextEditing({
               }
             }}
             autoFocus
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 border border-gray-300 text-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
             placeholder="Enter text..."
           />
           <div className="mt-2 flex space-x-2">
             <button
               onClick={() => handleTextEdit(editText)}
-              className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+              className="px-3 py-1 text-black rounded text-sm hover:bg-gray-100"
             >
               Save
             </button>
@@ -76,7 +76,7 @@ export function useTextEditing({
                 setEditingElement(null);
                 setEditText('');
               }}
-              className="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
+              className="px-3 py-1 bg-gray-300 text-black rounded text-sm hover:bg-gray-400"
             >
               Cancel
             </button>

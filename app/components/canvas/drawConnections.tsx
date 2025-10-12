@@ -29,7 +29,7 @@ export function drawConnection(
   // Curved connection line
   ctx.save();
   ctx.beginPath();
-  ctx.strokeStyle = hovered ? "#1e90ff" : "#23272e";
+  ctx.strokeStyle = hovered ? "#ffffff" : "#ffffff";
   ctx.lineWidth = hovered ? 4 : 2;
   if (connection.type === "dashed") ctx.setLineDash([8, 6]);
   else ctx.setLineDash([]);

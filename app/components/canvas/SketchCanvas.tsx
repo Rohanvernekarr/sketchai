@@ -16,6 +16,19 @@ export default function SketchCanvas(props: SketchCanvasProps) {
   const elementsHook = useElements(props, canvasRef, drawingHook);
   const textEditHook = useTextEditing(props);
 
+  // Handle keyboard shortcuts
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && elementsHook.connectingFrom) {
+        e.preventDefault();
+        elementsHook.cancelConnection();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [elementsHook]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -53,24 +66,43 @@ export default function SketchCanvas(props: SketchCanvasProps) {
       drawFreehandShape(ctx, drawingHook.currentShape.start, drawingHook.currentShape.current, activeTool, strokeColor, strokeWidth, props.fillColor);
     }
     // Elements
-    systemElements.forEach(element => drawElement(ctx, element));
-  }, [props, canvasRef, drawingHook.isDrawing, drawingHook.currentStroke, drawingHook.currentShape]);
+    systemElements.forEach(element => {
+      // Highlight element if it's being connected from
+      const isConnecting = elementsHook.connectingFrom === element.id;
+      const elementToRender = isConnecting ? { ...element, selected: true } : element;
+      drawElement(ctx, elementToRender);
+    });
+  }, [props, canvasRef, drawingHook.isDrawing, drawingHook.currentStroke, drawingHook.currentShape, elementsHook.connectingFrom]);
 
   // Compose all needed mouse event handlers for canvas
   const mergeHandlers = (...handlers: any[]) => (e: React.MouseEvent<HTMLCanvasElement>) =>
     handlers.forEach(h => h && h(e));
 
+  // Determine cursor style based on active tool
+  const getCursorStyle = () => {
+    if (props.activeTool === 'connector') {
+      return elementsHook.connectingFrom ? 'crosshair' : 'pointer';
+    }
+    if (props.activeTool === 'select') return 'default';
+    return 'crosshair';
+  };
+
   return (
     <div className="w-full h-full relative bg-gray-50">
       <canvas
         ref={canvasRef}
-        className="w-full h-full cursor-crosshair"
+        className={`w-full h-full cursor-${getCursorStyle()}`}
         onMouseDown={mergeHandlers(drawingHook.eventHandlers.onMouseDown, elementsHook.eventHandlers.onMouseDown)}
         onMouseMove={mergeHandlers(drawingHook.eventHandlers.onMouseMove, elementsHook.eventHandlers.onMouseMove)}
         onMouseUp={mergeHandlers(drawingHook.eventHandlers.onMouseUp, elementsHook.eventHandlers.onMouseUp)}
         onMouseLeave={mergeHandlers(drawingHook.eventHandlers.onMouseLeave, null)}
         onDoubleClick={textEditHook.handleDoubleClick}
       />
+      {elementsHook.connectingFrom && (
+        <div className="absolute top-4 left-4 bg-black border border-white text-white px-3 py-2 rounded text-sm">
+          Click on another element to connect • Press ESC to cancel
+        </div>
+      )}
       {textEditHook.renderOverlay()}
     </div>
   );

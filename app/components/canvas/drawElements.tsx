@@ -3,7 +3,7 @@ import { SystemElement } from '../types';
 export function drawElement(ctx: CanvasRenderingContext2D, element: SystemElement) {
   ctx.save();
   ctx.translate(element.position.x, element.position.y);
-  ctx.shadowColor = !element.selected ? 'rgba(0,0,0,0.10)' : "#1976d2";
+  ctx.shadowColor = !element.selected ? 'rgba(0,0,0,0.0)' : "#19762";
   ctx.shadowBlur = element.selected ? 18 : 5;
   ctx.shadowOffsetY = 2;
 
