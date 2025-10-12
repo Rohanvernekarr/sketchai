@@ -107,23 +107,11 @@ export function drawElement(ctx: CanvasRenderingContext2D, element: SystemElemen
   }
 
    if (element.selected) {
-    ctx.strokeStyle = "#1e90ff";
-    ctx.lineWidth = 4;
+    
+    ctx.lineWidth = 1;
     ctx.setLineDash([8, 6]);
     ctx.strokeRect(-7, -7, element.size.width + 14, element.size.height + 14);
     ctx.setLineDash([]);
-    // Draw resize handles (corners)
-    // use a helper like getCornerCoords
-    ['nw','ne','sw','se'].forEach(corner=>{
-      const [x, y] = getResizeCornerCoords(element, corner);
-      ctx.beginPath();
-      ctx.arc(x-element.position.x, y-element.position.y, 8, 0, 2*Math.PI);
-      ctx.fillStyle = "#fff";
-      ctx.strokeStyle = "#1e90ff";
-      ctx.lineWidth = 2;
-      ctx.fill();
-      ctx.stroke();
-    });
   }
   ctx.restore();
 }
