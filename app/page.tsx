@@ -1,7 +1,9 @@
-import MainLayout from './components/layout/MainLayout';
+"use client"
 
 export default function Home() {
-  return <MainLayout />;
+  return (
+    <div>Home</div>
+  )
 }
 
 

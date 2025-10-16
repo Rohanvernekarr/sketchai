@@ -1,4 +1,3 @@
-// sketch-canvas/useTextEditing.tsx
 import React, { useState, useCallback } from 'react';
 import { SketchCanvasProps } from '../types';
 
@@ -48,7 +47,7 @@ export function useTextEditing({
     if (!editingElement) return null;
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[1000]">
-        <div className="bg-white p-4 rounded-lg shadow-lg">
+        <div className=" p-8 rounded-lg shadow-lg border border-zinc-300 ">
           <input
             type="text"
             value={editText}
@@ -61,13 +60,13 @@ export function useTextEditing({
               }
             }}
             autoFocus
-            className="px-3 py-2 border border-gray-300 text-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
+            className="px-3 py-2 border border-gray-300 text-zinc-300 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
             placeholder="Enter text..."
           />
           <div className="mt-2 flex space-x-2">
             <button
               onClick={() => handleTextEdit(editText)}
-              className="px-3 py-1 text-black rounded text-sm hover:bg-gray-100"
+              className="px-3 py-1 text-white rounded text-sm hover:bg-zinc-800"
             >
               Save
             </button>

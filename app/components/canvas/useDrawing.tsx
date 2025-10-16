@@ -1,8 +1,6 @@
-// sketch-canvas/useDrawing.ts
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Point, FreehandStroke, Tool, SketchCanvasProps } from '../types';
-import { drawFreehandStroke, drawFreehandShape } from './drawFreehand';
+import { Point, FreehandStroke, SketchCanvasProps } from '../types';
 
 export function useDrawing(
   {
