@@ -94,15 +94,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
       ),
       tooltip: 'Eraser'
     },
-    { 
-      id: 'text' as Tool,
-      icon: (
-        <svg className="w-6 h-6" >
-          <text x="4" y="16" className="text-sm font-mono">T</text>
-        </svg>
-      ),
-      tooltip: 'Text (T)'
-    },
+   
     { 
       id: 'rectangle' as Tool, 
       icon: (
@@ -164,32 +156,52 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
   }, [onToolChange]);
 
   return (
-    <div className="w-18 border-l border-white flex flex-col items-center  py-4 gap-3 bg-black">
-      <div className="text-xs text-white font-semibold mb-2">System</div>
-      {systemTools.map(tool => (
-        <IconButton
-          key={tool.id}
-          icon={tool.icon}
-          active={activeTool === tool.id}
-          onClick={() => onToolChange(tool.id)}
-          size="sm"
-          tooltip={tool.tooltip}
-        />
-      ))}
-      
-      <div className="w-full h-px bg-white/20 my-2" />
-      
-      <div className="text-xs text-white font-semibold mb-2">Draw</div>
-      {freehandTools.map(tool => (
-        <IconButton
-          key={tool.id}
-          icon={tool.icon}
-          active={activeTool === tool.id}
-          onClick={() => onToolChange(tool.id)}
-          size="sm"
-          tooltip={tool.tooltip}
-        />
-      ))}
+    <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-4">
+      <div className="
+        bg-black/80 backdrop-blur-md
+        rounded-full
+        border border-white/50
+        shadow-2xl
+        flex flex-col sm:flex-row items-center
+        p-5 sm:p-3
+        gap-2 sm:gap-4
+        max-w-max
+        transition-all duration-300
+        hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]
+      ">
+        {/* System Tools Section */}
+        <div className="flex flex-row items-center gap-1 sm:gap-2">
+          <div className="hidden sm:block text-xs text-white/70 font-medium mr-2">System</div>
+          {systemTools.map(tool => (
+            <IconButton
+              key={tool.id}
+              icon={tool.icon}
+              active={activeTool === tool.id}
+              onClick={() => onToolChange(tool.id)}
+              size="sm"
+              tooltip={tool.tooltip}
+            />
+          ))}
+        </div>
+
+        {/* Divider - visible only when both sections are side by side */}
+        <div className="hidden sm:block w-px h-6 bg-white/20 mx-1" />
+
+        {/* Draw Tools Section */}
+        <div className="flex flex-row items-center gap-1 sm:gap-2">
+          <div className="hidden sm:block text-xs text-white/70 font-medium mr-2">Draw</div>
+          {freehandTools.map(tool => (
+            <IconButton
+              key={tool.id}
+              icon={tool.icon}
+              active={activeTool === tool.id}
+              onClick={() => onToolChange(tool.id)}
+              size="sm"
+              tooltip={tool.tooltip}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

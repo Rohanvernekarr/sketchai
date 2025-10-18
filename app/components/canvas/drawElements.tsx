@@ -50,6 +50,7 @@ export function drawElement(ctx: CanvasRenderingContext2D, element: SystemElemen
       ctx.arc(100, 100, 35, 0, Math.PI * 2);
       ctx.closePath();
       ctx.fill();
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
       ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
       ctx.shadowBlur = 15;

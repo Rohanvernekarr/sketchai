@@ -346,7 +346,7 @@ export default function MainLayout() {
     </div>
     
    
-    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:hidden text-[12px]">
+    <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:hidden text-[12px]">
       <span>El: {systemElements.length}</span>
       <span>Con: {connections.length}</span>
       <span>Str: {freehandStrokes.length}</span>
