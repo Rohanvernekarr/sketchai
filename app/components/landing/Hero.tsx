@@ -224,7 +224,7 @@ export const Hero: React.FC = () => {
           className="text-xl md:text-2xl text-blue-200 font-medium mb-8"
         >
           <span className="bg-gradient-to-r from-blue-500 via-teal-500 to-violet-500 text-transparent bg-clip-text">
-            Generate diagrams, automate docs, and design faster.
+            Generate diagrams and design faster.
           </span>
         </p>
         <button
