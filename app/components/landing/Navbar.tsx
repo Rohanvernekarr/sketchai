@@ -38,7 +38,7 @@ export const Navbar: React.FC = () => {
         <span className="w-3 h-5 bg-blue-400 rounded-sm mr-1 inline-block"></span>
         <span className="w-3 h-5 bg-red-700 rounded-sm mr-1 inline-block"></span>
         <span className="w-3 h-5 bg-gray-300 rounded-sm mr-2 inline-block"></span>
-        <span className="text-3xl font-sans tracking-tight">Sketch.ai</span>
+        <span className="text-3xl font-bold tracking-tight">Sketch.ai</span>
       </div>
 
      

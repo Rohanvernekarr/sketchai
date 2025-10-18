@@ -16,7 +16,7 @@ export default function SketchCanvas(props: SketchCanvasProps) {
   const elementsHook = useElements(props, canvasRef, drawingHook);
   const textEditHook = useTextEditing(props);
 
-  // Handle keyboard shortcuts
+ 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && elementsHook.connectingFrom) {
@@ -67,18 +67,18 @@ export default function SketchCanvas(props: SketchCanvasProps) {
     }
     // Elements
     systemElements.forEach(element => {
-      // Highlight element if it's being connected from
+     
       const isConnecting = elementsHook.connectingFrom === element.id;
       const elementToRender = isConnecting ? { ...element, selected: true } : element;
       drawElement(ctx, elementToRender);
     });
   }, [props, canvasRef, drawingHook.isDrawing, drawingHook.currentStroke, drawingHook.currentShape, elementsHook.connectingFrom]);
 
-  // Compose all needed mouse event handlers for canvas
+  
   const mergeHandlers = (...handlers: any[]) => (e: React.MouseEvent<HTMLCanvasElement>) =>
     handlers.forEach(h => h && h(e));
 
-  // Determine cursor style based on active tool
+ 
   const getCursorStyle = () => {
     if (props.activeTool === 'connector') {
       return elementsHook.connectingFrom ? 'crosshair' : 'pointer';

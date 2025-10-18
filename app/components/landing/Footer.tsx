@@ -22,8 +22,8 @@ export const Footer: React.FC = () => {
           <a href="/contact" className="text-gray-400 hover:text-zinc-600 transition">Contact</a>
         </div>
         <div className="flex gap-4 items-center">
-          <a href="https://twitter.com/" aria-label="Twitter" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-zinc-400 transition"><Twitter /></a>
-          <a href="https://github.com/" aria-label="GitHub" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-zinc-400 transition"><Github /></a>
+          <a href="https://x.com/Rohanvrnkr?t=vlHdD6F4lOaCW8BbzWE5zA&s=09" aria-label="Twitter" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-zinc-400 transition"><Twitter /></a>
+          <a href="https://github.com/Rohanvernekarr" aria-label="GitHub" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-zinc-400 transition"><Github /></a>
         </div>
       </div>
       <div className="text-center pb-5 text-gray-400 text-xs">
