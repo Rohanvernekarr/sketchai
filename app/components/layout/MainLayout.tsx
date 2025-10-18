@@ -269,7 +269,7 @@ export default function MainLayout() {
   }, [handleUndo]);
 
   return (
-    <div className="h-screen flex flex-row select-none overflow-hidden">
+    <div className="h-screen w-full flex flex-row select-none overflow-hidden">
       {/* Main content area */}
       <div className="flex-1 flex flex-row relative">
         {/* Canvas area */}

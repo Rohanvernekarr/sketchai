@@ -180,7 +180,7 @@ export default function SketchCanvas(props: SketchCanvasProps) {
   };
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-gray-50">
+    <div ref={containerRef} className="w-full h-full relative bg-black">
       <canvas
         ref={canvasRef}
         className={`absolute inset-0 w-full h-full touch-none cursor-${getCursorStyle()}`}
