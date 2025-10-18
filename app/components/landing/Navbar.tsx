@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
+import Link from "next/link" ;
 
 export const Navbar: React.FC = () => {
   const navRef = useRef<HTMLDivElement>(null);
@@ -43,13 +44,13 @@ export const Navbar: React.FC = () => {
 
      
       <div className="hidden md:flex gap-8 font-sans text-gray-200 items-center">
-        <a className="hover:text-gray-300 transition" href="/">Product</a>
-        <a className="hover:text-gray-300 transition" href="/">Solutions</a>
-        <a className="hover:text-gray-300 transition" href="/">Resources</a>
-        <a className="hover:text-gray-300 transition" href="/">Pricing</a>
-        <a href="/dashboard" className="px-8 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold">
+        <Link href="/" className="hover:text-gray-300 transition">Product</Link>
+        <Link href="/" className="hover:text-gray-300 transition">Solutions</Link>
+        <Link href="/" className="hover:text-gray-300 transition">Resources</Link>
+        <Link href="/" className="hover:text-gray-300 transition">Pricing</Link>
+        <Link href="/dashboard" className="px-8 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold">
           Login
-        </a>
+        </Link>
       </div>
 
      
@@ -69,25 +70,23 @@ export const Navbar: React.FC = () => {
         className="md:hidden absolute flex flex-col justify-center top-full right-0 w-70 bg-transparent backdrop-blur-sm overflow-hidden opacity-0 h-0"
       >
         <div className="flex flex-col gap-4 p-8 font-sans text-gray-200">
-          <a className="hover:text-gray-300 transition" href="/" onClick={() => setIsMenuOpen(false)}>
+          <Link href="/" className="hover:text-gray-300 transition" onClick={() => setIsMenuOpen(false)}>
             Product
-          </a>
-          <a className="hover:text-gray-300 transition" href="/" onClick={() => setIsMenuOpen(false)}>
+          </Link>
+          <Link href="/" className="hover:text-gray-300 transition" onClick={() => setIsMenuOpen(false)}>
             Solutions
-          </a>
-          <a className="hover:text-gray-300 transition" href="/" onClick={() => setIsMenuOpen(false)}>
+          </Link>
+          <Link href="/" className="hover:text-gray-300 transition" onClick={() => setIsMenuOpen(false)}>
             Resources
-          </a>
-          <a className="hover:text-gray-300 transition" href="/" onClick={() => setIsMenuOpen(false)}>
+          </Link>
+          <Link href="/" className="hover:text-gray-300 transition" onClick={() => setIsMenuOpen(false)}>
             Pricing
-          </a>
-          <a
-            href="/dashboard"
-            className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
+          </Link>
+          <Link href="/dashboard" className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
             onClick={() => setIsMenuOpen(false)}
           >
             Login
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

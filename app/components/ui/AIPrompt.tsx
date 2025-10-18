@@ -78,7 +78,7 @@ export default function AIPrompt({ onGenerate, isGenerating, isOpen, onClose }: 
                   disabled={isGenerating}
                   className="text-left text-sm text-gray-300 hover:text-white block w-full p-3 rounded border border-gray-600 hover:border-white transition-colors disabled:opacity-50"
                 >
-                  "{example}"
+                  &quot;{example}&quot;
                 </button>
               ))}
             </div>

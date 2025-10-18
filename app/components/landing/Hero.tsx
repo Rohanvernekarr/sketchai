@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 
+
 export const Hero: React.FC = () => {
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const underlineRef = useRef<HTMLDivElement>(null);
