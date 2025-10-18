@@ -116,6 +116,32 @@ export default function MainLayout() {
     }
   }, [historyIndex, history, currentDiagram]);
 
+  // Redo function
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      const nextState = history[newIndex];
+      
+      // Update state without triggering history save
+      setSystemElements(nextState.elements);
+      setConnections(nextState.connections);
+      setFreehandStrokes(nextState.freehandStrokes);
+      setHistoryIndex(newIndex);
+      
+      // Update current diagram
+      if (currentDiagram) {
+        setCurrentDiagram({
+          ...currentDiagram,
+          elements: nextState.elements,
+          connections: nextState.connections
+        });
+      }
+      
+      // Manually trigger re-render by updating handlers
+      // The canvas will re-render automatically due to systemElements/connections props change
+    }
+  }, [historyIndex, history, currentDiagram]);
+
   // Clear all function
   const handleClear = useCallback(() => {
     setSystemElements([]);
@@ -262,47 +288,73 @@ export default function MainLayout() {
           />
           
           {/* Action buttons */}
-          <div className="absolute top-4 right-4 z-10 flex gap-2">
-            <button
-              onClick={() => setIsAIPromptOpen(true)}
-              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors flex items-center gap-1"
-              title="Generate with AI (Ctrl+G)"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              AI Generate
-            </button>
-            <button
-              onClick={handleUndo}
-              disabled={historyIndex <= 0}
-              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-              title="Undo (Ctrl+Z)"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-              </svg>
-              Undo
-            </button>
-            <button
-              onClick={handleClear}
-              disabled={systemElements.length === 0 && connections.length === 0 && freehandStrokes.length === 0}
-              className="bg-black border border-white text-white px-3 py-2 rounded text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-              title="Clear All"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              Clear
-            </button>
-          </div>
+       <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex gap-1 sm:gap-2">
+  <button
+    onClick={() => setIsAIPromptOpen(true)}
+    className="bg-black border border-white text-white px-10 py-3 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors flex items-center gap-1"
+    title="Generate with AI (Ctrl+G)"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+    <span className=" sm:inline">AI Generate</span>
+  </button>
+  
+  <button
+    onClick={handleUndo}
+    disabled={historyIndex <= 0}
+    className="bg-black border border-white text-white px-3 py-1.5 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+    title="Undo (Ctrl+Z)"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+    </svg>
+    <span className="hidden sm:inline">Undo</span>
+  </button>
+  
+  <button
+    onClick={handleRedo}
+    disabled={historyIndex >= history.length - 1}
+    className="bg-black border border-white text-white px-3 py-1.5 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+    title="Redo (Ctrl+Y)"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+    </svg>
+    <span className="hidden sm:inline">Redo</span>
+  </button>
+  
+  <button
+    onClick={handleClear}
+    disabled={systemElements.length === 0 && connections.length === 0 && freehandStrokes.length === 0}
+    className="bg-black border border-white text-white px-3 py-1.5 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+    title="Clear All"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+    <span className="hidden sm:inline">Clear</span>
+  </button>
+</div>
 
-          {/* Simple status info */}
-          <div className="absolute bottom-4 left-4 z-10">
-            <div className="bg-black border border-white rounded p-2 text-white text-xs">
-              Elements: {systemElements.length} | Connections: {connections.length} | Strokes: {freehandStrokes.length} | History: {historyIndex + 1}/{history.length}
-            </div>
-          </div>
+         
+         <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 z-10 max-w-[95%] sm:max-w-none">
+  <div className="bg-black border border-white rounded p-1.5 sm:p-2 text-white text-[10px] sm:text-xs">
+  
+    <div className="hidden sm:block">
+      Elements: {systemElements.length} | Connections: {connections.length} | Strokes: {freehandStrokes.length} | History: {historyIndex + 1}/{history.length}
+    </div>
+    
+   
+    <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:hidden text-[12px]">
+      <span>El: {systemElements.length}</span>
+      <span>Con: {connections.length}</span>
+      <span>Str: {freehandStrokes.length}</span>
+      <span>His: {historyIndex + 1}/{history.length}</span>
+    </div>
+  </div>
+</div>
+
         </div>
         
         {/* Right toolbar */}

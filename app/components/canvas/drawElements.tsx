@@ -115,15 +115,5 @@ export function drawElement(ctx: CanvasRenderingContext2D, element: SystemElemen
   }
   ctx.restore();
 }
-// Helper for resize handles
-function getResizeCornerCoords(el: SystemElement, which: string) {
-  const { x, y } = el.position, w = el.size.width, h = el.size.height;
-  switch (which) {
-    case 'nw': return [x, y];
-    case 'ne': return [x + w, y];
-    case 'sw': return [x, y + h];
-    case 'se': return [x + w, y + h];
-    default: return [x, y];
-  }
-}
+
 

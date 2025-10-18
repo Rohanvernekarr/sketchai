@@ -126,3 +126,55 @@ export function drawFreehandShape(
   }
   ctx.restore();
 }
+
+// Draw text element on canvas
+export function drawText(
+  ctx: CanvasRenderingContext2D,
+  element: any
+) {
+  if (!element.text || element.text.trim() === '') return;
+  
+  ctx.save();
+  
+  // Set font properties
+  const fontSize = element.fontSize || 16;
+  const fontFamily = element.fontFamily || 'Arial';
+  ctx.font = `${fontSize}px ${fontFamily}`;
+  ctx.fillStyle = element.color || '#ffffff';
+  ctx.textBaseline = 'top';
+  
+  // Split text into lines for multiline support
+  const lines = element.text.split('\n');
+  const lineHeight = fontSize * 1.2;
+  
+  // Draw each line of text
+  lines.forEach((line: string, index: number) => {
+    ctx.fillText(
+      line,
+      element.position.x,
+      element.position.y + (index * lineHeight)
+    );
+  });
+  
+  // Calculate text dimensions for selection box
+  if (element.selected) {
+    // Measure the width of the longest line
+    const textWidths = lines.map(line => ctx.measureText(line).width);
+    const maxWidth = Math.max(...textWidths);
+    const textHeight = lines.length * lineHeight;
+    
+    // Draw selection box
+    ctx.strokeStyle = '#4a90e2';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(
+      element.position.x - 5,
+      element.position.y - 5,
+      maxWidth + 10,
+      textHeight + 10
+    );
+    ctx.setLineDash([]);
+  }
+  
+  ctx.restore();
+}
