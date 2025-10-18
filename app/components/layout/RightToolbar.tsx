@@ -13,7 +13,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'select' as Tool,  
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <MousePointer className='w-4 h-4' />
              </svg>
       ),
@@ -22,7 +22,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'database' as Tool, 
       icon: (
-        <svg className="w-4 h-4 ">
+        <svg className="w-6 h-6 ">
           <Database className='w-4 h-4' />
         </svg>
       ),
@@ -31,7 +31,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'server' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <Server className='w-4 h-4' />
         </svg>
       ),
@@ -40,7 +40,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'cloud' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <Cloud className='w-4 h-4' />
         </svg>
       ),
@@ -49,7 +49,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'user' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <User className='w-4 h-4' />
         </svg>
       ),
@@ -58,7 +58,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'api' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
         <GitCompareArrows className='w-4 h-4' />
         </svg>
       ),
@@ -67,7 +67,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'connector' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
          <Cable className='w-4 h-4' />
         </svg>
       ),
@@ -79,7 +79,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'pen' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <PenTool className='w-4 h-4' />
         </svg>
       ),
@@ -88,16 +88,25 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'eraser' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
          <Eraser className= "w-4 h-4" />
         </svg>
       ),
       tooltip: 'Eraser'
     },
     { 
+      id: 'text' as Tool,
+      icon: (
+        <svg className="w-6 h-6" >
+          <text x="4" y="16" className="text-sm font-mono">T</text>
+        </svg>
+      ),
+      tooltip: 'Text (T)'
+    },
+    { 
       id: 'rectangle' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
          <RectangleHorizontal className= "w-4 h-4" />
         </svg>
       ),
@@ -106,7 +115,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'circle' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
         <Circle className= "w-4 h-4" />
        </svg>
       ),
@@ -115,7 +124,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
     { 
       id: 'triangle' as Tool, 
       icon: (
-        <svg className="w-4 h-4" >
+        <svg className="w-6 h-6" >
           <Triangle className= "w-4 h-4" />
         </svg>
       ),
@@ -155,7 +164,7 @@ export default function RightToolbar({ activeTool, onToolChange }: RightToolbarP
   }, [onToolChange]);
 
   return (
-    <div className="w-16 border-l border-white flex flex-col items-center py-4 gap-2 bg-black">
+    <div className="w-18 border-l border-white flex flex-col items-center  py-4 gap-3 bg-black">
       <div className="text-xs text-white font-semibold mb-2">System</div>
       {systemTools.map(tool => (
         <IconButton
