@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sketch App",
+  title: "Sketch Ai",
   description: "Design",
 };
 
@@ -24,11 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+     <body
+  className={`bg-grid-lines ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+>
+  {children}
+</body>
+
     </html>
   );
 }
