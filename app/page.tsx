@@ -3,6 +3,10 @@
 import {Footer} from "./components/landing/Footer"
 import {Hero} from "./components/landing/Hero"
 import {Navbar} from "./components/landing/Navbar"
+import {Features} from"./components/landing/Features"
+import {HowItWorks} from"./components/landing/HowitWorks"
+//import {ProductDemo} from"./components/landing/ProductDemo"
+//import {UseCases} from"./components/landing/UseCase"
 
 
 export default function Home() {
@@ -10,6 +14,10 @@ export default function Home() {
     <>
     <Navbar />
     <Hero />
+    <Features />
+    <HowItWorks />
+  
+    
     <Footer />
     </>
   )

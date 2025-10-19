@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
+import Link from "next/link";
 
 
 export const Hero: React.FC = () => {
@@ -9,7 +10,7 @@ export const Hero: React.FC = () => {
   const bubblesRef = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    // Hero entrance animations
+   
     const tl = gsap.timeline();
 
     tl.from(headlineRef.current, { y: 70, opacity: 0, duration: 0.9, ease: "power4.out" });
@@ -115,8 +116,8 @@ export const Hero: React.FC = () => {
       <div className="pointer-events-none absolute inset-0 z-0">
 
         {[
-          { className: "left-8 top-8 w-100 h-100", bg: "from-zinc-500/50 to-zinc-800/30", blur: "blur-2xl" },
-          { className: "right-20 bottom-10 w-58 h-58", bg: "from-zinc-400/40 to-zinc-600/20", blur: "blur-3xl" },
+          { className: "left-8 top-8 w-100 h-100", bg: "from-zinc-600/50 to-zinc-800/30", blur: "blur-2xl" },
+          { className: "right-20 bottom-10 w-58 h-58", bg: "from-zinc-600/40 to-zinc-600/20", blur: "blur-3xl" },
           { className: "left-1/3 top-1/4 w-58 h-58", bg: "from-zinc-300/50 to-zinc-700/10", blur: "blur-2xl" },
           { className: "right-70 top-28 w-58 h-58", bg: "from-zinc-400/50 to-zinc-700/10", blur: "blur-3xl" },
           { className: "left-120 top-138 w-58 h-58", bg: "from-zinc-400/50 to-zinc-700/10", blur: "blur-3xl" },
@@ -227,11 +228,13 @@ export const Hero: React.FC = () => {
             Generate diagrams and design faster.
           </span>
         </p>
-        <button
-          className="px-8 py-3 text-lg font-bold rounded-2xl bg-zinc-900/75 hover:bg-blue-900 shadow-xl text-white border border-blue-400 hover:border-blue-500 transition backdrop-blur-md"
+        <Link href="/dashboard"><button
+        
+          className="px-8 py-3 text-lg font-bold rounded-2xl bg-zinc-900/75 hover:bg-zinc-950 cursor-pointer shadow-xl text-white border border-blue-400 hover:border-blue-500 transition backdrop-blur-md"
         >
           Try Sketch.AI &rarr;
-        </button>
+        </button></Link>
+        
 
       </div>
     </section>
