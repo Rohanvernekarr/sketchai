@@ -1,4 +1,4 @@
-import { Connection, SystemElement, Point } from "../types";
+import { Connection, SystemElement, Point } from "../../types";
 
 function getBezier(start: Point, end: Point, curveAmount: number = 0.3) {
   const dx = end.x - start.x,

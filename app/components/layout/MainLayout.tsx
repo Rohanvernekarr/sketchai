@@ -3,8 +3,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import RightToolbar from './RightToolbar';
 import SketchCanvas from '../canvas/SketchCanvas';
 import AIPrompt from '../ui/AIPrompt';
-import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, AIResponse, FreehandStroke } from '../types';
-import { geminiService } from '../services/geminiService';
+import { Tool, DrawingPath, BrushType, SystemElement, Connection, DiagramData, AIResponse, FreehandStroke } from '../../types';
+import { geminiService } from '../../services/geminiService';
 import { v4 as uuidv4 } from 'uuid';
 
 interface HistoryState {

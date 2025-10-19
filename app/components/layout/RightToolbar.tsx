@@ -1,6 +1,6 @@
 import React from 'react';
 import IconButton from '../ui/IconButton';
-import { Tool } from '../types';
+import { Tool } from '../../types';
 import { MousePointer , Database , Server, Cloud ,User, GitCompareArrows, Cable, PenTool , Eraser , RectangleHorizontal , Circle , Triangle } from 'lucide-react';
 
 interface RightToolbarProps {

@@ -1,4 +1,4 @@
-import { FreehandStroke, Point } from '../types';
+import { FreehandStroke, Point } from '../../types';
 
 // For saved strokes or shapes
 export function drawFreehandStroke(ctx: CanvasRenderingContext2D, stroke: FreehandStroke) {

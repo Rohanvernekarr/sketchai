@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Point, FreehandStroke, SketchCanvasProps } from '../types';
+import { Point, FreehandStroke, SketchCanvasProps } from '../../types';
 
 export function useDrawing(
   {

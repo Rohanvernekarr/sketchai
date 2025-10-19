@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { SketchCanvasProps } from '../types';
+import { SketchCanvasProps } from '../../types';
 import { useCanvas } from './useCanvas';
 import { useDrawing } from './useDrawing';
 import { useElements } from './useElements';

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Point, SystemElement, SketchCanvasProps, Connection } from '../types';
+import { Point, SystemElement, SketchCanvasProps, Connection } from '../../types';
 
 export function useElements(
   {

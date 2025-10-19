@@ -1,4 +1,4 @@
-import { SystemElement } from '../types';
+import { SystemElement } from '../../types';
 
 export function drawElement(ctx: CanvasRenderingContext2D, element: SystemElement) {
   ctx.save();

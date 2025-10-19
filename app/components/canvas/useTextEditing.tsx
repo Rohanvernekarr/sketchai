@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { SketchCanvasProps } from '../types';
+import { SketchCanvasProps } from '../../types';
 
 export function useTextEditing({
   systemElements = [],
