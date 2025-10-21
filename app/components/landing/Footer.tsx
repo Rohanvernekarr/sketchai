@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer ref={footerRef} className="  border-t border-gray-900 ">
+    <footer ref={footerRef} className="  border-t border-none ">
       <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col gap-6 md:flex-row md:justify-between items-center">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold text-blue-300 tracking-tight">Sketch.<span className="text-gray-300">ai</span></span>
