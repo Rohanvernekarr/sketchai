@@ -18,7 +18,7 @@ export const ProductDemo = () => {
         </div>
 
         <div className=" rounded-2xl p-8 shadow-2xl">
-          {/* Input Area */}
+         
           <div className="mb-8">
             <label className="block text-sm font-medium text-gray-400 mb-3">
               Describe your system design:
@@ -34,7 +34,7 @@ export const ProductDemo = () => {
             </button>
           </div>
 
-          {/* Demo Output */}
+          
           <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 rounded-lg p-8 min-h-[400px] flex items-center justify-center">
             <div className="text-center text-gray-500">
               <p className="text-lg">Generated diagram would appear here</p>

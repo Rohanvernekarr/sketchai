@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Pencil, Bot, Square } from "lucide-react";
 
 export const HowItWorks = () => {
 
@@ -23,19 +22,19 @@ export const HowItWorks = () => {
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-          duration: 5 + Math.random() * 2, // slight random speed for natural look
+          duration: 5 + Math.random() * 2,
           delay: i * 1.2
         });
       });
     }, []);
 
-  // Video sources, change to your actual mp4 files
+ 
   const videos = [
     { src: "/video.mp4", title: "Sketch.AI: Whiteboard Demo" },
     { src: "/video1.mp4", title: "Sketch.AI: AI Generation" },
   ];
 
-  // On mobile, tap video to bring to front (toggle it)
+  
   const handleSetActive = (i: number) => setActive(i);
 
   return (
@@ -61,7 +60,7 @@ export const HowItWorks = () => {
         <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
           How <span className="text-blue-400">It Works</span>?
         </h2>
-        <p className="text-lg md:text-xl text-zinc-400 font-normal mx-auto max-w-2xl">
+        <p className="text-lg md:text-xl text-zinc-400 font-normal mx-auto max-w-2xl px-4 ">
           Experience a lightning-fast workflow. Draw freehand, use clean shapes, or describe your system to generate it instantly with AI—then export and share!
         </p>
       </div>

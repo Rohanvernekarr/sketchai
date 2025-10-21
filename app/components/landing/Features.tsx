@@ -107,7 +107,7 @@ export const Features = () => {
         The fastest way to visualize your system designs
       </p>
       
-      {/*Large screens */}
+      
       <div className="hidden md:block relative w-full max-w-7xl h-[600px] flex items-center justify-center">
         {features.map((feat, i) => (
           <div
