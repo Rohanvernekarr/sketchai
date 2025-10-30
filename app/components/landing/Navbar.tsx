@@ -1,11 +1,19 @@
+"use client";
+
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
-import Link from "next/link" ;
+import Link from "next/link";
+import { useSession, signOut } from "../../lib/auth-client";
+import AuthModal from "../ui/AuthModal";
 
 export const Navbar: React.FC = () => {
   const navRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
   const menuRef = useRef<HTMLDivElement>(null);
+  
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (navRef.current) {
@@ -33,7 +41,19 @@ export const Navbar: React.FC = () => {
     }
   }, [isMenuOpen]);
 
+  const handleSignOut = () => {
+    signOut();
+    setIsMenuOpen(false);
+  };
+
+  const openAuthModal = (mode: "signin" | "signup") => {
+    setAuthMode(mode);
+    setIsAuthModalOpen(true);
+    setIsMenuOpen(false);
+  };
+
   return (
+    <>
     <nav ref={navRef} className="sticky top-0 z-50 w-full px-8 py-6 mx-auto max-w-7xl flex justify-between items-center">
       <div className="flex items-center ">
         <span className="w-3 h-5 bg-blue-400 rounded-sm mr-1 inline-block"></span>
@@ -48,9 +68,35 @@ export const Navbar: React.FC = () => {
         <Link href="/" className="hover:text-gray-300 transition">Solutions</Link>
         <Link href="/" className="hover:text-gray-300 transition">Resources</Link>
         <Link href="/" className="hover:text-gray-300 transition">Pricing</Link>
-        <Link href="/dashboard" className="px-8 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold">
-          Login
-        </Link>
+        
+        {session?.user ? (
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard" className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold">
+              Dashboard
+            </Link>
+            <button
+              onClick={handleSignOut}
+              className="px-6 py-2 rounded border border-gray-300 text-gray-200 hover:bg-gray-800 transition font-semibold"
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => openAuthModal("signup")}
+              className="px-6 py-2 rounded text-gray-900 bg-zinc-200 hover:text-gray-800 transition font-semibold"
+            >
+              Sign In
+            </button>
+            {/* <button
+              onClick={() => openAuthModal("signup")}
+              className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold"
+            >
+              Sign Up
+            </button> */}
+          </div>
+        )}
       </div>
 
      
@@ -82,13 +128,47 @@ export const Navbar: React.FC = () => {
           <Link href="/" className="hover:text-gray-300 transition" onClick={() => setIsMenuOpen(false)}>
             Pricing
           </Link>
-          <Link href="/dashboard" className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </Link>
+          
+          {session?.user ? (
+            <>
+              <Link href="/dashboard" className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="px-6 py-2 rounded border border-gray-300 text-gray-200 hover:bg-gray-800 transition font-semibold"
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => openAuthModal("signin")}
+                className="px-6 py-2 rounded text-gray-200 hover:text-white transition font-semibold text-center"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => openAuthModal("signup")}
+                className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </div>
     </nav>
+
+    {/* Auth Modal */}
+    <AuthModal
+      isOpen={isAuthModalOpen}
+      onClose={() => setIsAuthModalOpen(false)}
+      initialMode={authMode}
+    />
+  </>
   );
 };
