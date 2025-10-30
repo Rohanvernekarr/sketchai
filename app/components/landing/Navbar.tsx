@@ -147,23 +147,22 @@ export const Navbar: React.FC = () => {
             <>
               <button
                 onClick={() => openAuthModal("signin")}
-                className="px-6 py-2 rounded text-gray-200 hover:text-white transition font-semibold text-center"
+                className="px-6 py-2 rounded text-gray-900  bg-zinc-200 hover:text-white transition font-semibold text-center"
               >
                 Sign In
               </button>
-              <button
+              {/* <button
                 onClick={() => openAuthModal("signup")}
                 className="px-6 py-2 rounded text-black bg-zinc-200 hover:bg-zinc-300 transition font-semibold text-center"
               >
                 Sign Up
-              </button>
+              </button> */}
             </>
           )}
         </div>
       </div>
     </nav>
 
-    {/* Auth Modal */}
     <AuthModal
       isOpen={isAuthModalOpen}
       onClose={() => setIsAuthModalOpen(false)}
