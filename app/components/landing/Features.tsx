@@ -20,24 +20,22 @@ export const Features = () => {
   const textRefs = useRef<(HTMLDivElement | null)[]>([]);
   const bubblesRef = useRef<HTMLDivElement[]>([]);
 
-  
-    useEffect(() => {
-     
-      const tl = gsap.timeline();
+  useEffect(() => {
+    const tl = gsap.timeline();
 
-      bubblesRef.current.forEach((el, i) => {
-        if (!el) return;
-        gsap.to(el, {
-          y: i % 2 === 0 ? "+=32" : "-=38",
-          x: i % 2 === 0 ? "+=25" : "-=30",
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          duration: 5 + Math.random() * 2, // slight random speed for natural look
-          delay: i * 1.2
-        });
+    bubblesRef.current.forEach((el, i) => {
+      if (!el) return;
+      gsap.to(el, {
+        y: i % 2 === 0 ? "+=32" : "-=38",
+        x: i % 2 === 0 ? "+=25" : "-=30",
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        duration: 5 + Math.random() * 2, // slight random speed for natural look
+        delay: i * 1.2,
       });
-    }, []);
+    });
+  }, []);
 
   useEffect(() => {
     gsap.from(imagesRef.current, {
@@ -45,7 +43,7 @@ export const Features = () => {
       opacity: 0,
       duration: 1,
       ease: "power3.out",
-      stagger: 0.15
+      stagger: 0.15,
     });
     gsap.from(textRefs.current, {
       y: 25,
@@ -53,23 +51,23 @@ export const Features = () => {
       scale: 0.88,
       duration: 0.7,
       stagger: 0.16,
-      delay: 0.7
+      delay: 0.7,
     });
   }, []);
 
   const features = [
     {
       img: systemImg1.src,
-      label: "Workspace"
+      label: "Workspace",
     },
     {
       img: systemImg2.src,
-      label: "Stack Diagrams"
+      label: "Stack Diagrams",
     },
     {
       img: systemImg3.src,
-      label: "Interactive AI Generation"
-    }
+      label: "Interactive AI Generation",
+    },
   ];
 
   const featureTexts = [
@@ -83,18 +81,38 @@ export const Features = () => {
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 z-0">
-
+      <div className="pointer-events-none absolute inset-0 z-0">
         {[
-          { className: "left-8 top-8 w-100 h-100", bg: "from-zinc-800/50 to-zinc-800/30", blur: "blur-2xl" },
-          { className: "right-20 bottom-10 w-58 h-58", bg: "from-zinc-600/40 to-zinc-600/20", blur: "blur-3xl" },
-          { className: "left-1/3 top-1/4 w-58 h-58", bg: "from-zinc-300/50 to-zinc-700/10", blur: "blur-2xl" },
-          { className: "right-70 top-28 w-58 h-58", bg: "from-zinc-400/50 to-zinc-700/10", blur: "blur-3xl" },
-          { className: "left-120 top-138 w-58 h-58", bg: "from-zinc-400/50 to-zinc-700/10", blur: "blur-3xl" },
-
+          {
+            className: "left-8 top-8 w-100 h-100",
+            bg: "from-zinc-800/50 to-zinc-800/30",
+            blur: "blur-2xl",
+          },
+          {
+            className: "right-20 bottom-10 w-58 h-58",
+            bg: "from-zinc-600/40 to-zinc-600/20",
+            blur: "blur-3xl",
+          },
+          {
+            className: "left-1/3 top-1/4 w-58 h-58",
+            bg: "from-zinc-300/50 to-zinc-700/10",
+            blur: "blur-2xl",
+          },
+          {
+            className: "right-70 top-28 w-58 h-58",
+            bg: "from-zinc-400/50 to-zinc-700/10",
+            blur: "blur-3xl",
+          },
+          {
+            className: "left-120 top-138 w-58 h-58",
+            bg: "from-zinc-400/50 to-zinc-700/10",
+            blur: "blur-3xl",
+          },
         ].map((b, i) => (
           <div
-            ref={el => { bubblesRef.current[i] = el!; }}
+            ref={(el) => {
+              bubblesRef.current[i] = el!;
+            }}
             key={i}
             className={`absolute z-0 ${b.className} rounded-full bg-gradient-to-br ${b.bg} ${b.blur} opacity-40`}
           />
@@ -106,32 +124,38 @@ export const Features = () => {
       <p className="text-xl text-zinc-400 text-center mb-16">
         The fastest way to visualize your system designs
       </p>
-      
-      
+
       <div className="hidden md:block relative w-full max-w-7xl h-[600px] flex items-center justify-center">
         {features.map((feat, i) => (
           <div
             key={i}
-            ref={el => { imagesRef.current[i] = el; }}
+            ref={(el) => {
+              imagesRef.current[i] = el;
+            }}
             className={`
               absolute shadow-2xl rounded-2xl border-2 border-zinc-200 overflow-hidden
-              cursor-pointer 
+              cursor-pointer
               ${i === 0 ? "z-10 left-[7%] top-[6%] md:left-[5%] md:top-[0%] w-[510px] h-[320px]" : ""}
               ${i === 1 ? "z-20 left-[28%] top-[18%] md:left-[35%] md:top-[19%] w-[490px] h-[320px]" : ""}
               ${i === 2 ? "z-30 left-[58%] top-[5%] md:left-[60%] md:top-[10%] w-[460px] h-[320px]" : ""}
             `}
             style={{
-              boxShadow: "0 14px 32px rgba(64,144,255,0.13)"
+              boxShadow: "0 14px 32px rgba(64,144,255,0.13)",
             }}
-            onMouseEnter={e => gsap.to(e.currentTarget, { y: -14, scale: 1.03, duration: 0.32 })}
-            onMouseLeave={e => gsap.to(e.currentTarget, { y: 0, scale: 1, duration: 0.3 })}
+            onMouseEnter={(e) =>
+              gsap.to(e.currentTarget, { y: -14, scale: 1.03, duration: 0.32 })
+            }
+            onMouseLeave={(e) =>
+              gsap.to(e.currentTarget, { y: 0, scale: 1, duration: 0.3 })
+            }
           >
-            
             <div className="flex items-center px-4 py-[7px] bg-gradient-to-r from-zinc-700 to-zinc-900 rounded-t-2xl">
               <span className="w-2 h-2 bg-red-400 rounded-full mr-1.5" />
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-1.5" />
               <span className="w-2 h-2 bg-green-400 rounded-full mr-2.5" />
-              <span className="text-xs text-zinc-200 font-semibold">{feat.label}</span>
+              <span className="text-xs text-zinc-200 font-semibold">
+                {feat.label}
+              </span>
             </div>
             <img
               src={feat.img}
@@ -141,16 +165,18 @@ export const Features = () => {
             />
           </div>
         ))}
-        
+
         {featureTexts.map((txt, i) => (
           <div
             key={i}
-            ref={el => { textRefs.current[i] = el; }}
+            ref={(el) => {
+              textRefs.current[i] = el;
+            }}
             className="absolute font-sans text-lg text-zinc-200 bg-transparent px-5 py-3 rounded-2xl shadow-md"
             style={{
               ...textPositions[i],
               maxWidth: "270px",
-              zIndex: 99
+              zIndex: 10,
             }}
           >
             {txt}
@@ -158,7 +184,6 @@ export const Features = () => {
         ))}
       </div>
 
-      
       <div className="flex flex-col md:hidden items-center w-full gap-10">
         {features.map((feat, i) => (
           <div
@@ -169,7 +194,9 @@ export const Features = () => {
               <span className="w-2 h-2 bg-red-400 rounded-full mr-1.5" />
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-1.5" />
               <span className="w-2 h-2 bg-green-400 rounded-full mr-2.5" />
-              <span className="text-xs text-zinc-200 font-semibold">{feat.label}</span>
+              <span className="text-xs text-zinc-200 font-semibold">
+                {feat.label}
+              </span>
             </div>
             <img
               src={feat.img}
