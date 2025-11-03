@@ -280,7 +280,7 @@ export const UseCases = () => {
                     className="flex items-center gap-3 p-3 rounded-lg border border-zinc-500 hover:border-zinc-400 transition-colors"
                   >
                     <feature.icon className="feature-icon w-5 h-5 text-zinc-500 flex-shrink-0" />
-                    <span className="feature-text text-sm font-medium text-zinc-400">
+                    <span className="feature-text text-xs md:text-sm font-medium text-zinc-400">
                       {feature.text}
                     </span>
                   </div>
