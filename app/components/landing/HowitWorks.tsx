@@ -105,7 +105,6 @@ export const HowItWorks = () => {
             onMouseLeave={() => setActive(null)}
             onTouchStart={() => handleSetActive(idx)}
           >
-            {/* Mac window bar */}
             <div className="w-full flex items-center px-4 py-[10px] bg-gradient-to-r from-zinc-700 to-zinc-900 rounded-t-2xl select-none">
               <span className="w-2 h-2 bg-red-400 rounded-full mr-1.5" />
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-1.5" />
@@ -132,7 +131,6 @@ export const HowItWorks = () => {
                   outline-none
                   transition-all
                 "
-                poster="/video-poster.jpg"
                 style={{ background: "#111" }}
               />
             </div>

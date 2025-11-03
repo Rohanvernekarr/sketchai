@@ -260,6 +260,9 @@ export const UseCases = () => {
               ref={(el) => {
                 cardsRef.current[index] = el;
               }}
+              style={{
+                boxShadow: "0 14px 32px rgba(64,144,255,0.13)",
+              }}
               className="group relative p-8 border-3 border-zinc-400 hover:border-zinc-300 mx-auto w-86 md:w-full rounded-2xl cursor-pointer transition-colors duration-300"
             >
               <div className="main-icon mb-4 mr-0">
@@ -286,8 +289,6 @@ export const UseCases = () => {
                   </div>
                 ))}
               </div>
-
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-zinc-800/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </div>
           ))}
         </div>

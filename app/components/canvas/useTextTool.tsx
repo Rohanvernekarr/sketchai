@@ -9,7 +9,7 @@ export function useTextTool(
     textElements = [],
     onTextElementsChange,
   }: SketchCanvasProps,
-  canvasRef: React.RefObject<HTMLCanvasElement | null>
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
 ) {
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState<string>("");
@@ -21,7 +21,7 @@ export function useTextTool(
       const rect = canvas.getBoundingClientRect();
       return { x: e.clientX - rect.left, y: e.clientY - rect.top };
     },
-    [canvasRef]
+    [canvasRef],
   );
 
   const handleClick = useCallback(
@@ -29,19 +29,19 @@ export function useTextTool(
       if (activeTool !== "text") return;
 
       const point = getCoordinates(e);
-      
+
       // Check if clicking on existing text
-      const clickedText = textElements.find(text => {
+      const clickedText = textElements.find((text) => {
         const canvas = canvasRef.current;
         if (!canvas) return false;
-        
+
         const ctx = canvas.getContext("2d");
         if (!ctx) return false;
-        
+
         ctx.font = `${text.fontWeight} ${text.fontSize}px ${text.fontFamily}`;
         const textWidth = ctx.measureText(text.text).width;
         const textHeight = text.fontSize;
-        
+
         return (
           point.x >= text.position.x &&
           point.x <= text.position.x + textWidth &&
@@ -51,18 +51,16 @@ export function useTextTool(
       });
 
       if (clickedText) {
-     
         setEditingTextId(clickedText.id);
         setEditingText(clickedText.text);
         setCursorPosition(clickedText.text.length);
       } else {
-       
         const newTextElement: TextElement = {
           id: uuidv4(),
           position: point,
           text: "",
           color: strokeColor,
-          fontSize: 24,
+          fontSize: 42,
           fontFamily: "Arial, sans-serif",
           fontWeight: "normal",
         };
@@ -70,35 +68,44 @@ export function useTextTool(
         if (onTextElementsChange) {
           onTextElementsChange([...textElements, newTextElement]);
         }
-        
+
         setEditingTextId(newTextElement.id);
         setEditingText("");
         setCursorPosition(0);
       }
     },
-    [activeTool, getCoordinates, textElements, canvasRef, strokeColor, onTextElementsChange]
+    [
+      activeTool,
+      getCoordinates,
+      textElements,
+      canvasRef,
+      strokeColor,
+      onTextElementsChange,
+    ],
   );
 
   const updateTextElement = useCallback(
     (id: string, newText: string) => {
       if (onTextElementsChange) {
         onTextElementsChange(
-          textElements.map(element =>
-            element.id === id ? { ...element, text: newText } : element
-          )
+          textElements.map((element) =>
+            element.id === id ? { ...element, text: newText } : element,
+          ),
         );
       }
     },
-    [textElements, onTextElementsChange]
+    [textElements, onTextElementsChange],
   );
 
   const deleteTextElement = useCallback(
     (id: string) => {
       if (onTextElementsChange) {
-        onTextElementsChange(textElements.filter(element => element.id !== id));
+        onTextElementsChange(
+          textElements.filter((element) => element.id !== id),
+        );
       }
     },
-    [textElements, onTextElementsChange]
+    [textElements, onTextElementsChange],
   );
 
   const handleKeyPress = useCallback(
@@ -119,12 +126,14 @@ export function useTextTool(
 
       if (e.key === "Enter") {
         if (e.shiftKey) {
-          const newText = editingText.slice(0, cursorPosition) + "\n" + editingText.slice(cursorPosition);
+          const newText =
+            editingText.slice(0, cursorPosition) +
+            "\n" +
+            editingText.slice(cursorPosition);
           setEditingText(newText);
           setCursorPosition(cursorPosition + 1);
           updateTextElement(editingTextId, newText);
         } else {
-
           if (editingText.trim() === "") {
             deleteTextElement(editingTextId);
           }
@@ -137,7 +146,9 @@ export function useTextTool(
 
       if (e.key === "Backspace") {
         if (cursorPosition > 0) {
-          const newText = editingText.slice(0, cursorPosition - 1) + editingText.slice(cursorPosition);
+          const newText =
+            editingText.slice(0, cursorPosition - 1) +
+            editingText.slice(cursorPosition);
           setEditingText(newText);
           setCursorPosition(cursorPosition - 1);
           updateTextElement(editingTextId, newText);
@@ -147,7 +158,9 @@ export function useTextTool(
 
       if (e.key === "Delete") {
         if (cursorPosition < editingText.length) {
-          const newText = editingText.slice(0, cursorPosition) + editingText.slice(cursorPosition + 1);
+          const newText =
+            editingText.slice(0, cursorPosition) +
+            editingText.slice(cursorPosition + 1);
           setEditingText(newText);
           updateTextElement(editingTextId, newText);
         }
@@ -165,13 +178,23 @@ export function useTextTool(
       }
 
       if (e.key.length === 1) {
-        const newText = editingText.slice(0, cursorPosition) + e.key + editingText.slice(cursorPosition);
+        const newText =
+          editingText.slice(0, cursorPosition) +
+          e.key +
+          editingText.slice(cursorPosition);
         setEditingText(newText);
         setCursorPosition(cursorPosition + 1);
         updateTextElement(editingTextId, newText);
       }
     },
-    [editingTextId, editingText, cursorPosition, activeTool, updateTextElement, deleteTextElement]
+    [
+      editingTextId,
+      editingText,
+      cursorPosition,
+      activeTool,
+      updateTextElement,
+      deleteTextElement,
+    ],
   );
 
   useEffect(() => {
@@ -183,7 +206,7 @@ export function useTextTool(
 
   const getCurrentEditingElement = useCallback(() => {
     if (!editingTextId) return null;
-    return textElements.find(el => el.id === editingTextId) || null;
+    return textElements.find((el) => el.id === editingTextId) || null;
   }, [editingTextId, textElements]);
 
   return {
