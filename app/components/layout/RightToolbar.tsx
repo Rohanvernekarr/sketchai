@@ -14,6 +14,7 @@ import {
   RectangleHorizontal,
   Circle,
   Triangle,
+  Text,
 } from "lucide-react";
 
 interface RightToolbarProps {
@@ -136,7 +137,16 @@ export default function RightToolbar({
           <Triangle className="w-4 h-4" />
         </svg>
       ),
-      tooltip: "Triangle (T)",
+      tooltip: "Triangle",
+    },
+    {
+      id: "text" as Tool,
+      icon: (
+        <svg className="w-6 h-6">
+          <Text className="w-4 h-4" />
+        </svg>
+      ),
+      tooltip: "Text",
     },
   ];
 
@@ -187,11 +197,7 @@ export default function RightToolbar({
         hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]
       "
       >
-        {/* System Tools Section */}
         <div className="flex flex-row items-center gap-1 sm:gap-2">
-          <div className="hidden sm:block text-xs text-white/70 font-medium mr-2">
-            System
-          </div>
           {systemTools.map((tool) => (
             <IconButton
               key={tool.id}
@@ -207,9 +213,6 @@ export default function RightToolbar({
         <div className="hidden sm:block w-px h-6 bg-white/20 mx-1" />
 
         <div className="flex flex-row items-center gap-1 sm:gap-2">
-          <div className="hidden sm:block text-xs text-white/70 font-medium mr-2">
-            Draw
-          </div>
           {freehandTools.map((tool) => (
             <IconButton
               key={tool.id}
