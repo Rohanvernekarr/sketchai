@@ -51,7 +51,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
     return () => window.removeEventListener("resize", resizeCanvas);
   }, [canvasRef]);
 
-  // Add non-passive touch event listeners for mobile drawing
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -86,7 +85,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
       canvas.dispatchEvent(mouseEvent);
     };
 
-    // Add listeners with passive: false to allow preventDefault
     canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
     canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
     canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
@@ -110,7 +108,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [elementsHook]);
 
-  // Main render loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -145,7 +142,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
 
     freehandStrokes.forEach((stroke) => drawFreehandStroke(ctx, stroke));
 
-    // Draw current pen stroke
     if (
       drawingHook.isDrawing &&
       drawingHook.currentStroke.length > 1 &&
@@ -159,7 +155,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
       });
     }
 
-    // Draw current shape preview
     if (
       drawingHook.currentShape &&
       ["rectangle", "circle", "triangle", "line", "arrow"].includes(activeTool)

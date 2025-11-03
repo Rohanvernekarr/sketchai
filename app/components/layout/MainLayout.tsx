@@ -38,14 +38,12 @@ export default function MainLayout() {
     null,
   );
 
-  // History management
   const [history, setHistory] = useState<HistoryState[]>([
     { elements: [], connections: [], freehandStrokes: [] },
   ]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle AI diagram generation
   const handleAIGenerate = useCallback(
     async (prompt: string) => {
       setIsGenerating(true);
@@ -74,7 +72,6 @@ export default function MainLayout() {
           }),
         );
 
-        // Create connections from AI response
         const newConnections: Connection[] = response.connections.map(
           (conn: any) => ({
             id: uuidv4(),
