@@ -29,22 +29,28 @@ export interface DrawingPath {
   color: string;
   strokeWidth: number;
   fillColor?: string;
-  // 0..1 opacity for rendering
   opacity?: number;
-  // Text-specific properties (used when tool === 'text')
   text?: string;
-  fontSize?: number; // px
+  fontSize?: number; 
   fontFamily?: string;
   fontWeight?: string;
   align?: 'left' | 'center' | 'right';
-  // Brush style for pen tool
   brush?: BrushType;
-  // Shape properties for freehand shapes
   shapeType?: 'rectangle' | 'circle' | 'triangle' | 'line' | 'arrow';
   startPoint?: Point;
   endPoint?: Point;
-  // For smooth curves
   smoothed?: boolean;
+}
+
+export interface TextElement {
+  id: string;
+  position: Point;
+  text: string;
+  color: string;
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: string;
+  isEditing?: boolean;
 }
 
 // Freehand drawing stroke
@@ -55,10 +61,9 @@ export interface FreehandStroke {
   strokeWidth: number;
   opacity?: number;
   brush?: BrushType;
-  shape?: Tool; // For geometric shapes like rectangle, circle, triangle
+  shape?: Tool; 
 }
 
-// System Design Elements
 export interface SystemElement {
   id: string;
   type: 'database' | 'server' | 'cloud' | 'user' | 'api' | 'box';
@@ -127,6 +132,8 @@ export interface SketchCanvasProps {
   onConnectionsChange?: (connections: Connection[]) => void;
   freehandStrokes?: FreehandStroke[];
   onFreehandStrokesChange?: (strokes: FreehandStroke[]) => void;
+  textElements?: TextElement[];
+  onTextElementsChange?: (elements: TextElement[]) => void;
 }
 
 export type BrushType = 'pencil' | 'marker' | 'highlighter' | 'calligraphy';

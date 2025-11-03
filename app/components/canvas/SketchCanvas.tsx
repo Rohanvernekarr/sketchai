@@ -6,9 +6,12 @@ import { useCanvas } from "./useCanvas";
 import { useDrawing } from "./useDrawing";
 import { useElements } from "./useElements";
 import { useTextEditing } from "./useTextEditing";
+import { useTextTool } from "./useTextTool";
+import { useBlinkingCursor } from "./useBlinkingCursor";
 import { drawElement } from "./drawElements";
 import { drawConnection } from "./drawConnections";
 import { drawFreehandStroke, drawFreehandShape } from "./drawFreehand";
+import { drawTextElement } from "./drawText";
 
 export default function SketchCanvas(props: SketchCanvasProps) {
   const canvasRef = useCanvas();
@@ -16,6 +19,8 @@ export default function SketchCanvas(props: SketchCanvasProps) {
   const drawingHook = useDrawing(props, canvasRef);
   const elementsHook = useElements(props, canvasRef, drawingHook);
   const textEditHook = useTextEditing(props);
+  const textToolHook = useTextTool(props, canvasRef);
+  const showCursor = useBlinkingCursor(!!textToolHook.editingTextId);
 
   // Handle canvas resize for responsiveness
   useEffect(() => {
@@ -133,6 +138,7 @@ export default function SketchCanvas(props: SketchCanvasProps) {
       systemElements = [],
       connections = [],
       freehandStrokes = [],
+      textElements = [],
       activeTool,
       strokeColor,
       strokeWidth,
@@ -177,6 +183,18 @@ export default function SketchCanvas(props: SketchCanvasProps) {
         : element;
       drawElement(ctx, elementToRender);
     });
+
+    // Draw text elements
+    textElements.forEach((textElement) => {
+      const isEditing = textToolHook.editingTextId === textElement.id;
+      drawTextElement(
+        ctx, 
+        textElement, 
+        isEditing, 
+        textToolHook.cursorPosition, 
+        showCursor
+      );
+    });
   }, [
     props,
     canvasRef,
@@ -184,12 +202,26 @@ export default function SketchCanvas(props: SketchCanvasProps) {
     drawingHook.currentStroke,
     drawingHook.currentShape,
     elementsHook.connectingFrom,
+    textToolHook.editingTextId,
+    textToolHook.cursorPosition,
+    showCursor,
   ]);
 
   const mergeHandlers =
     (...handlers: any[]) =>
     (e: React.MouseEvent<HTMLCanvasElement>) =>
       handlers.forEach((h) => h && h(e));
+
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (props.activeTool === "text") {
+      // Focus the canvas to capture keyboard events
+      const canvas = canvasRef.current;
+      if (canvas) {
+        canvas.focus();
+      }
+      textToolHook.handleClick(e);
+    }
+  };
 
   const getCursorStyle = () => {
     if (props.activeTool === "connector") {
@@ -204,7 +236,8 @@ export default function SketchCanvas(props: SketchCanvasProps) {
     <div ref={containerRef} className="w-full h-full relative bg-black">
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 w-full h-full touch-none cursor-${getCursorStyle()}`}
+        tabIndex={0}
+        className={`absolute inset-0 w-full h-full touch-none cursor-${getCursorStyle()} outline-none`}
         onMouseDown={mergeHandlers(
           drawingHook.eventHandlers.onMouseDown,
           elementsHook.eventHandlers.onMouseDown,
@@ -221,6 +254,7 @@ export default function SketchCanvas(props: SketchCanvasProps) {
           drawingHook.eventHandlers.onMouseLeave,
           null,
         )}
+        onClick={handleClick}
         onDoubleClick={textEditHook.handleDoubleClick}
       />
       {elementsHook.connectingFrom && (

@@ -156,18 +156,18 @@ export default function RightToolbar({
       if (e.ctrlKey || e.metaKey) return;
 
       const keyMap: { [key: string]: Tool } = {
-        v: "select",
-        d: "database",
-        s: "server",
-        c: "cloud",
-        u: "user",
-        a: "api",
-        l: "connector",
-        p: "pen",
-        e: "eraser",
-        r: "rectangle",
-        o: "circle",
-        t: "triangle",
+        // v: "select",
+        // d: "database",
+        // s: "server",
+        // c: "cloud",
+        // u: "user",
+        // a: "api",
+        // l: "connector",
+        // p: "pen",
+        // e: "eraser",
+        // r: "rectangle",
+        // o: "circle",
+        // t: "triangle",
       };
 
       const tool = keyMap[e.key.toLowerCase()];

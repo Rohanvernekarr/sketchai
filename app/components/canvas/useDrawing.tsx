@@ -51,6 +51,7 @@ export function useDrawing(
         );
         if (onFreehandStrokesChange) onFreehandStrokesChange(newStrokes);
       }
+      // Text tool is handled by useTextTool hook
     },
     [
       activeTool,

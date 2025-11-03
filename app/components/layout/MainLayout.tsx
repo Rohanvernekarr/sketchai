@@ -10,6 +10,7 @@ import {
   Connection,
   DiagramData,
   FreehandStroke,
+  TextElement,
 } from "../../types";
 import { geminiService } from "../../services/geminiService";
 import { v4 as uuidv4 } from "uuid";
@@ -19,6 +20,7 @@ interface HistoryState {
   elements: SystemElement[];
   connections: Connection[];
   freehandStrokes: FreehandStroke[];
+  textElements: TextElement[];
 }
 
 export default function MainLayout() {
@@ -34,12 +36,13 @@ export default function MainLayout() {
   const [systemElements, setSystemElements] = useState<SystemElement[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [freehandStrokes, setFreehandStrokes] = useState<FreehandStroke[]>([]);
+  const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [currentDiagram, setCurrentDiagram] = useState<DiagramData | null>(
     null,
   );
 
   const [history, setHistory] = useState<HistoryState[]>([
-    { elements: [], connections: [], freehandStrokes: [] },
+    { elements: [], connections: [], freehandStrokes: [], textElements: [] },
   ]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,6 +104,7 @@ export default function MainLayout() {
             elements: newElements,
             connections: newConnections,
             freehandStrokes: [],
+            textElements: [],
           };
           const newHistory = [...history.slice(0, historyIndex + 1), newState];
           setHistory(newHistory);
@@ -125,6 +129,7 @@ export default function MainLayout() {
       setSystemElements(previousState.elements);
       setConnections(previousState.connections);
       setFreehandStrokes(previousState.freehandStrokes);
+      setTextElements(previousState.textElements);
       setHistoryIndex(newIndex);
 
       // Update current diagram
@@ -151,6 +156,7 @@ export default function MainLayout() {
       setSystemElements(nextState.elements);
       setConnections(nextState.connections);
       setFreehandStrokes(nextState.freehandStrokes);
+      setTextElements(nextState.textElements);
       setHistoryIndex(newIndex);
 
       // Update current diagram
@@ -171,6 +177,7 @@ export default function MainLayout() {
     setSystemElements([]);
     setConnections([]);
     setFreehandStrokes([]);
+    setTextElements([]);
     setCurrentDiagram(null);
 
     // Save clear state to history
@@ -178,6 +185,7 @@ export default function MainLayout() {
       elements: [],
       connections: [],
       freehandStrokes: [],
+      textElements: [],
     };
     const newHistory = [...history.slice(0, historyIndex + 1), clearState];
     setHistory(newHistory);
@@ -202,6 +210,14 @@ export default function MainLayout() {
   const handleFreehandStrokesChange = useCallback(
     (strokes: FreehandStroke[]) => {
       setFreehandStrokes(strokes);
+    },
+    [],
+  );
+
+  // Handle text elements change
+  const handleTextElementsChange = useCallback(
+    (elements: TextElement[]) => {
+      setTextElements(elements);
     },
     [],
   );
@@ -232,6 +248,7 @@ export default function MainLayout() {
       systemElements.length === 0 &&
       connections.length === 0 &&
       freehandStrokes.length === 0 &&
+      textElements.length === 0 &&
       history.length === 1
     ) {
       return;
@@ -243,6 +260,7 @@ export default function MainLayout() {
         elements: [...systemElements],
         connections: [...connections],
         freehandStrokes: [...freehandStrokes],
+        textElements: [...textElements],
       };
 
       // Don't save if state hasn't changed
@@ -254,7 +272,9 @@ export default function MainLayout() {
         JSON.stringify(currentState.connections) ===
           JSON.stringify(newState.connections) &&
         JSON.stringify(currentState.freehandStrokes) ===
-          JSON.stringify(newState.freehandStrokes)
+          JSON.stringify(newState.freehandStrokes) &&
+        JSON.stringify(currentState.textElements) ===
+          JSON.stringify(newState.textElements)
       ) {
         return;
       }
@@ -279,7 +299,7 @@ export default function MainLayout() {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [systemElements, connections, freehandStrokes, history, historyIndex]);
+  }, [systemElements, connections, freehandStrokes, textElements, history, historyIndex]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -326,9 +346,11 @@ export default function MainLayout() {
             systemElements={systemElements}
             connections={connections}
             freehandStrokes={freehandStrokes}
+            textElements={textElements}
             onElementsChange={handleElementsChange}
             onConnectionsChange={handleConnectionsChange}
             onFreehandStrokesChange={handleFreehandStrokesChange}
+            onTextElementsChange={handleTextElementsChange}
           />
 
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex gap-1 sm:gap-2">
