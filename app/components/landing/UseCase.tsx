@@ -260,11 +260,11 @@ export const UseCases = () => {
               ref={(el) => {
                 cardsRef.current[index] = el;
               }}
-              className="group relative p-8 border-3 border-zinc-400 hover:border-zinc-300 rounded-2xl cursor-pointer transition-colors duration-300"
+              className="group relative p-8 border-3 border-zinc-400 hover:border-zinc-300 mx-auto w-86 md:w-full rounded-2xl cursor-pointer transition-colors duration-300"
             >
               <div className="main-icon mb-4 mr-0">
                 <div className="inline-flex p-4 rounded-xl border border-zinc-400">
-                  <useCase.icon className="w-10 h-10 text-zinc-400 group-hover:text-zinc-200 transition-colors" />
+                  <useCase.icon className="w-10 h-10 text-zinc-300 group-hover:text-zinc-200 transition-colors" />
                 </div>
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import systemImg1 from "@/public/system.png";
 import systemImg2 from "@/public/system2.png";
 import systemImg3 from "@/public/system3.png";
+import Image from "next/image";
 
 const textPositions = [
   { top: "-6%", left: "45%" },
@@ -157,9 +158,11 @@ export const Features = () => {
                 {feat.label}
               </span>
             </div>
-            <img
+            <Image
               src={feat.img}
               alt={feat.label}
+              width={460}
+              height={285}
               className="w-full h-[285px] object-cover rounded-b-2xl"
               draggable={false}
             />
@@ -198,9 +201,11 @@ export const Features = () => {
                 {feat.label}
               </span>
             </div>
-            <img
+            <Image
               src={feat.img}
               alt={feat.label}
+              width={460}
+              height={285}
               className="w-full h-[200px] object-cover rounded-b-2xl"
               draggable={false}
             />
