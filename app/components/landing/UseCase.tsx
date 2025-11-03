@@ -25,22 +25,22 @@ export const UseCases = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const headerRef = useRef<HTMLDivElement>(null);
-  const bubblesRef = useRef<HTMLDivElement[]>([]);
+  // const bubblesRef = useRef<HTMLDivElement[]>([]);
 
-  useEffect(() => {
-    bubblesRef.current.forEach((el, i) => {
-      if (!el) return;
-      gsap.to(el, {
-        y: i % 2 === 0 ? "+=32" : "-=38",
-        x: i % 2 === 0 ? "+=25" : "-=30",
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        duration: 5 + Math.random() * 2, // slight random speed for natural look
-        delay: i * 1.2,
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   bubblesRef.current.forEach((el, i) => {
+  //     if (!el) return;
+  //     gsap.to(el, {
+  //       y: i % 2 === 0 ? "+=32" : "-=38",
+  //       x: i % 2 === 0 ? "+=25" : "-=30",
+  //       repeat: -1,
+  //       yoyo: true,
+  //       ease: "sine.inOut",
+  //       duration: 5 + Math.random() * 2, // slight random speed for natural look
+  //       delay: i * 1.2,
+  //     });
+  //   });
+  // }, []);
 
   const cases = [
     {
