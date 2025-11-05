@@ -70,7 +70,6 @@ export function useElements(
             );
         }
       } else if (activeTool === "connector") {
-        // Connection logic
         const clickedElement = systemElements.find(
           (el) =>
             point.x >= el.position.x &&
@@ -81,10 +80,8 @@ export function useElements(
 
         if (clickedElement) {
           if (!connectingFrom) {
-            // Start connection from this element
             setConnectingFrom(clickedElement.id);
           } else if (connectingFrom !== clickedElement.id) {
-            // Complete connection to this element
             const newConnection: Connection = {
               id: uuidv4(),
               from: connectingFrom,

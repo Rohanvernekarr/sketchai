@@ -215,12 +215,9 @@ export default function MainLayout() {
   );
 
   // Handle text elements change
-  const handleTextElementsChange = useCallback(
-    (elements: TextElement[]) => {
-      setTextElements(elements);
-    },
-    [],
-  );
+  const handleTextElementsChange = useCallback((elements: TextElement[]) => {
+    setTextElements(elements);
+  }, []);
 
   // Handle connections change
   const handleConnectionsChange = useCallback(
@@ -299,7 +296,14 @@ export default function MainLayout() {
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [systemElements, connections, freehandStrokes, textElements, history, historyIndex]);
+  }, [
+    systemElements,
+    connections,
+    freehandStrokes,
+    textElements,
+    history,
+    historyIndex,
+  ]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
