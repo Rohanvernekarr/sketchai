@@ -30,19 +30,15 @@ export default function SketchCanvas(props: SketchCanvasProps) {
 
       if (!canvas || !container) return;
 
-      // Get device pixel ratio for sharp rendering
       const dpr = window.devicePixelRatio || 1;
       const rect = container.getBoundingClientRect();
 
-      // Set canvas internal size accounting for device pixel ratio
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
 
-      // Set display size (CSS pixels)
       canvas.style.width = `${rect.width}px`;
       canvas.style.height = `${rect.height}px`;
 
-      // Scale context for high-DPI displays
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.scale(dpr, dpr);
@@ -184,15 +180,14 @@ export default function SketchCanvas(props: SketchCanvasProps) {
       drawElement(ctx, elementToRender);
     });
 
-    // Draw text elements
     textElements.forEach((textElement) => {
       const isEditing = textToolHook.editingTextId === textElement.id;
       drawTextElement(
-        ctx, 
-        textElement, 
-        isEditing, 
-        textToolHook.cursorPosition, 
-        showCursor
+        ctx,
+        textElement,
+        isEditing,
+        textToolHook.cursorPosition,
+        showCursor,
       );
     });
   }, [
@@ -214,7 +209,6 @@ export default function SketchCanvas(props: SketchCanvasProps) {
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (props.activeTool === "text") {
-      // Focus the canvas to capture keyboard events
       const canvas = canvasRef.current;
       if (canvas) {
         canvas.focus();

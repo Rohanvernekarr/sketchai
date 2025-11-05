@@ -64,8 +64,6 @@ export function drawFreehandStroke(
   ctx.stroke();
   ctx.restore();
 }
-
-// For current shape preview while drawing
 export function drawFreehandShape(
   ctx: CanvasRenderingContext2D,
   start: Point,
@@ -145,7 +143,6 @@ export function drawFreehandShape(
   ctx.restore();
 }
 
-// Draw text element on canvas
 export function drawText(ctx: CanvasRenderingContext2D, element: any) {
   if (!element.text || element.text.trim() === "") return;
 
@@ -168,7 +165,6 @@ export function drawText(ctx: CanvasRenderingContext2D, element: any) {
     );
   });
 
-  // Calculate text dimensions for selection box
   if (element.selected) {
     // Measure the width of the longest line
     const textWidths = lines.map((line) => ctx.measureText(line).width);
