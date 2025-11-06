@@ -12,14 +12,16 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  premium       Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  name              String?
+  email             String    @unique
+  emailVerified     Boolean   @default(false)
+  image             String?
+  premium           Boolean   @default(false)
+  dailyPromptCount  Int       @default(0)
+  lastPromptDate    DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
   
   accounts      Account[]
   sessions      Session[]
@@ -83,4 +85,16 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@map("verification")
+}
+
+model AnonymousSession {
+  id           String   @id @default(cuid())
+  sessionId    String   @unique
+  promptCount  Int      @default(0)
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  lastUsedAt   DateTime @default(now())
+
+  @@map("anonymous_sessions")
 }

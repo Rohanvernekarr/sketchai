@@ -8,7 +8,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false, // Set to true if you want email verification
+    requireEmailVerification: false, 
   },
   socialProviders: {
     google: {
@@ -17,8 +17,8 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day (session will be updated if user is active after 1 day)
+    expiresIn: 60 * 60 * 24 * 7, 
+    updateAge: 60 * 60 * 24, 
   },
   user: {
     additionalFields: {
@@ -30,7 +30,7 @@ export const auth = betterAuth({
   },
   advanced: {
     database: {
-      generateId: false, // Let Prisma handle ID generation
+      generateId: false, 
     },
   },
 });
