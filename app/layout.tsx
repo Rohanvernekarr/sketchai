@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "./components/providers/AuthProvider";
+import { UsageLimitsProvider } from "./context/UsageLimitsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
   className={`bg-grid-lines ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
 >
   <AuthProvider>
-    {children}
+    <UsageLimitsProvider>
+      {children}
+    </UsageLimitsProvider>
   </AuthProvider>
 </body>
 

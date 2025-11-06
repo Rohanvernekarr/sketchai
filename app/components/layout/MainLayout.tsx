@@ -12,9 +12,8 @@ import {
   FreehandStroke,
   TextElement,
 } from "../../types";
-import { geminiService } from "../../services/geminiService";
 import { v4 as uuidv4 } from "uuid";
-import { Zap, Undo, Redo, Trash } from "lucide-react";
+import { Zap, Undo, Redo, Trash, Home } from "lucide-react";
 
 interface HistoryState {
   elements: SystemElement[];
@@ -31,7 +30,6 @@ export default function MainLayout() {
   const [brush, setBrush] = useState<BrushType>("pencil");
   const [opacity, setOpacity] = useState<number>(1);
   const [zoom, setZoom] = useState(100);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isAIPromptOpen, setIsAIPromptOpen] = useState(false);
   const [systemElements, setSystemElements] = useState<SystemElement[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
@@ -48,13 +46,10 @@ export default function MainLayout() {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleAIGenerate = useCallback(
-    async (prompt: string) => {
-      setIsGenerating(true);
+    (data: any) => {
       try {
-        const response = await geminiService.generateSystemDesign(prompt);
-
         // Create system elements from AI response
-        const newElements: SystemElement[] = response.elements.map(
+        const newElements: SystemElement[] = data.elements.map(
           (el: any) => ({
             id: uuidv4(),
             type: el.type as
@@ -75,7 +70,7 @@ export default function MainLayout() {
           }),
         );
 
-        const newConnections: Connection[] = response.connections.map(
+        const newConnections: Connection[] = data.connections.map(
           (conn: any) => ({
             id: uuidv4(),
             from: newElements.find((el) => el.text === conn.from)?.id || "",
@@ -91,10 +86,10 @@ export default function MainLayout() {
           elements: newElements,
           connections: newConnections,
           metadata: {
-            title: response.title,
-            description: response.description,
+            title: data.title,
+            description: data.description,
             createdAt: new Date().toISOString(),
-            prompt: prompt,
+            prompt: data.prompt || 'AI Generated Design',
           },
         });
 
@@ -112,8 +107,6 @@ export default function MainLayout() {
         }, 100);
       } catch (error) {
         console.error("Error generating diagram:", error);
-      } finally {
-        setIsGenerating(false);
       }
     },
     [strokeColor, fillColor, history, historyIndex],
@@ -358,6 +351,16 @@ export default function MainLayout() {
           />
 
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex gap-1 sm:gap-2">
+            
+            <button
+              onClick={() => window.location.href = '/'}
+              className="bg-black border border-white text-white px-5 py-3 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors flex items-center gap-1"
+              title="Home"
+            >
+              <Home className="w-4 h-4" />
+              <span className=" sm:inline">Home</span>
+            </button>
+            
             <button
               onClick={() => setIsAIPromptOpen(true)}
               className="bg-black border border-white text-white px-10 py-3 sm:px-3 sm:py-2 rounded text-xs sm:text-sm hover:bg-white hover:text-black transition-colors flex items-center gap-1"
@@ -418,7 +421,6 @@ export default function MainLayout() {
 
       <AIPrompt
         onGenerate={handleAIGenerate}
-        isGenerating={isGenerating}
         isOpen={isAIPromptOpen}
         onClose={() => setIsAIPromptOpen(false)}
       />
