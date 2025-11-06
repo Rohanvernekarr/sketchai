@@ -57,7 +57,7 @@ export default function UsageIndicator({ className = '' }: UsageIndicatorProps) 
         {getMessage()}
       </span>
       {limits.isAnonymous && (
-        <span onClick={() => window.location.href = '/sign-in'} className="text-xs text-gray-400 hover:text-gray-300 cursor-pointer">
+        <span onClick={() => window.location.href = '/'} className="text-xs text-gray-400 hover:text-gray-300 cursor-pointer">
           • Sign in for daily access
         </span>
       )}

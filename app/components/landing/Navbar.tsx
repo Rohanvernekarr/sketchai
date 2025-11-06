@@ -51,6 +51,17 @@ export const Navbar: React.FC = () => {
     setIsMenuOpen(false);
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+    setIsMenuOpen(false);
+  };
+
   const openAuthModal = (mode: "signin" | "signup") => {
     setAuthMode(mode);
     setIsAuthModalOpen(true);
@@ -80,9 +91,12 @@ export const Navbar: React.FC = () => {
           <Link href="/" className="hover:text-gray-300 transition">
             Resources
           </Link>
-          <Link href="/" className="hover:text-gray-300 transition">
+          <button
+            onClick={() => scrollToSection('pricing')}
+            className="hover:text-gray-300 transition cursor-pointer"
+          >
             Pricing
-          </Link>
+          </button>
 
           {session?.user ? (
             <div className="flex items-center gap-4">
@@ -153,13 +167,12 @@ export const Navbar: React.FC = () => {
             >
               Resources
             </Link>
-            <Link
-              href="/"
-              className="hover:text-gray-300 transition"
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              onClick={() => scrollToSection('pricing')}
+              className="hover:text-gray-300 transition cursor-pointer text-left"
             >
               Pricing
-            </Link>
+            </button>
 
             {session?.user ? (
               <>

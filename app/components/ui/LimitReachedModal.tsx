@@ -19,7 +19,7 @@ export default function LimitReachedModal({
   if (!isOpen) return null
 
   const handleLoginClick = () => {
-    router.push('/sign-in?reason=limit_reached')
+    router.push('/')
     onClose()
   }
 

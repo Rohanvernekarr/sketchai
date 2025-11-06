@@ -86,7 +86,7 @@ export const Pricing = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden py-20 px-4">
+    <section id="pricing" className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden py-20 px-4">
       <div className="pointer-events-none absolute inset-0 z-0">
         {[
           {
