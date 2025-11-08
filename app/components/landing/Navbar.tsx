@@ -55,8 +55,8 @@ export const Navbar: React.FC = () => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
+        behavior: "smooth",
+        block: "start",
       });
     }
     setIsMenuOpen(false);
@@ -92,7 +92,7 @@ export const Navbar: React.FC = () => {
             Resources
           </Link>
           <button
-            onClick={() => scrollToSection('pricing')}
+            onClick={() => scrollToSection("pricing")}
             className="hover:text-gray-300 transition cursor-pointer"
           >
             Pricing
@@ -168,7 +168,7 @@ export const Navbar: React.FC = () => {
               Resources
             </Link>
             <button
-              onClick={() => scrollToSection('pricing')}
+              onClick={() => scrollToSection("pricing")}
               className="hover:text-gray-300 transition cursor-pointer text-left"
             >
               Pricing

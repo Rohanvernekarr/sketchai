@@ -20,33 +20,39 @@ class GeminiService {
   async generateSystemDesign(prompt: string): Promise<AIResponse> {
     try {
       const systemPrompt = `
-You are an expert system architect. Generate a system design diagram based on the user's description.
-Respond with a JSON object that includes:
-- title: A concise title for the system
-- description: A brief description of the system
-- elements: Array of system components with type, label, and optional position/size
-- connections: Array of connections between components
+      You are an expert system architect. Generate a detailed and production-grade system design diagram based on the user's description.
 
-Available element types: database, server, cloud, user, api, box
+      Respond with a well-structured JSON object that includes:
+      - title: A concise title for the system
+      - description: A brief description of the system, mentioning architecture style (e.g., microservices, monolith, serverless)
+      - elements: Array of system components with type, label, and optional position/size. Include high-level components such as database, server, cloud, user, api, box, and also allow components like cache, load balancer, message queue, storage if applicable.
+      - Each element should include an optional "details" key with a 1-line purpose or technology (e.g., Redis, S3, NGINX, API Gateway)
+      - connections: Array of flows between components with from, to, and label explaining data flow or protocol (e.g., HTTPS, gRPC, WebSocket, SQL query)
+      - Try to capture real-world architecture patterns such as authentication, caching, load balancing, scaling, and external services if relevant.
 
-Example response format:
-{
-  "title": "E-commerce System",
-  "description": "A scalable e-commerce platform with microservices architecture",
-  "elements": [
-    {"type": "user", "label": "Customer"},
-    {"type": "server", "label": "Web Server"},
-    {"type": "database", "label": "User Database"}
-  ],
-  "connections": [
-    {"from": "Customer", "to": "Web Server", "label": "HTTP Requests"},
-    {"from": "Web Server", "to": "User Database", "label": "Query"}
-  ]
-}
+      Available element types: database, server, cloud, user, api
 
-User prompt: ${prompt}
+      Example response format:
+      {
+        "title": "E-commerce System",
+        "description": "A scalable e-commerce platform using microservices architecture",
+        "elements": [
+          {"type": "user", "label": "Customer"},
+          {"type": "server", "label": "Web Server"},
+          {"type": "database", "label": "User Database"},
+          {"type": "api", "label": "Redis Cache", "details": "Improves read performance"}
+        ],
+        "connections": [
+          {"from": "Customer", "to": "Web Server", "label": "HTTPS Request"},
+          {"from": "Web Server", "to": "User Database", "label": "SQL Query"},
+          {"from": "Web Server", "to": "Redis Cache", "label": "Read / Write Cache"}
+        ]
+      }
 
-Generate ONLY valid JSON, no additional text:`;
+      User prompt: ${prompt}
+
+      Generate the most realistic system design based on user's input. Be precise and technical.
+      `;
 
       const result = await this.model.generateContent(systemPrompt);
       const response = await result.response;

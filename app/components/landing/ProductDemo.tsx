@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-// You can import the sample image directly if stored locally or use a demo SVG
-// import SampleDiagram from "./sample-diagram.jpg";
-
 export const ProductDemo = () => {
   const [prompt, setPrompt] = useState(
     "Design a microservices architecture with API gateway, authentication service, and database",
@@ -12,294 +9,122 @@ export const ProductDemo = () => {
   const [showDiagram, setShowDiagram] = useState(false);
 
   const DemoSVGDiagram = (
-    <svg width="680" height="380">
-      <g>
-        <circle
-          cx="80"
-          cy="80"
-          r="18"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-          fill="none"
-        />
-        <line
-          x1="80"
-          y1="98"
-          x2="80"
-          y2="130"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="110"
-          x2="65"
-          y2="125"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="110"
-          x2="95"
-          y2="125"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="130"
-          x2="65"
-          y2="155"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="130"
-          x2="95"
-          y2="155"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <text x="50" y="170" fill="#a1a1aa" fontSize="15">
-          Student
-        </text>
-      </g>
-      {/* Instructor */}
-      <g>
-        <circle
-          cx="80"
-          cy="250"
-          r="18"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-          fill="none"
-        />
-        <line
-          x1="80"
-          y1="268"
-          x2="80"
-          y2="300"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="280"
-          x2="65"
-          y2="295"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="280"
-          x2="95"
-          y2="295"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="300"
-          x2="65"
-          y2="325"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <line
-          x1="80"
-          y1="300"
-          x2="95"
-          y2="325"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <text x="45" y="340" fill="#a1a1aa" fontSize="15">
-          Instructor
-        </text>
-      </g>
+    <div className="w-full h-auto flex justify-center items-center">
+      <svg
+        viewBox="0 0 760 300"
+        preserveAspectRatio="xMidYMid meet"
+        className="w-full max-w-4xl h-auto"
+      >
+        {/* User */}
+        <g>
+          <circle
+            cx="80"
+            cy="140"
+            r="25"
+            stroke="white"
+            strokeWidth="2"
+            fill="none"
+          />
+          <text x="65" y="185" fill="white" fontSize="16">
+            User
+          </text>
+        </g>
 
-      {/* Video Streaming Service (rounded dashed box) */}
-      <g>
-        <rect
-          x="270"
-          y="30"
-          width="150"
-          height="55"
-          rx="20"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-          fill="none"
-          strokeDasharray="6,6"
-        />
-        <ellipse
-          cx="345"
-          cy="56"
-          rx="23"
-          ry="20"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <ellipse
-          cx="325"
-          cy="60"
-          rx="13"
-          ry="12"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <ellipse
-          cx="370"
-          cy="52"
-          rx="13"
-          ry="12"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <text x="285" y="84" fill="#a1a1aa" fontSize="14">
-          Video Streaming Service
-        </text>
-      </g>
+        {/* Frontend */}
+        <g>
+          <rect
+            x="180"
+            y="100"
+            width="150"
+            height="80"
+            rx="10"
+            stroke="white"
+            strokeWidth="2"
+            fill="none"
+          />
+          <text x="205" y="145" fill="white" fontSize="16">
+            React Frontend
+          </text>
+        </g>
 
-      {/* Web Application Server */}
-      <g>
-        <rect
-          x="268"
-          y="135"
-          width="180"
-          height="60"
-          rx="8"
-          fill="#151516"
-          stroke="#64748b"
-          strokeWidth="2"
-        />
-        <text x="285" y="170" fill="#7dd3fc" fontSize="18" fontWeight="bold">
-          Web Application Server
-        </text>
-      </g>
+        {/* Backend */}
+        <g>
+          <rect
+            x="380"
+            y="100"
+            width="160"
+            height="80"
+            rx="10"
+            stroke="white"
+            strokeWidth="2"
+            fill="none"
+          />
+          <text x="405" y="145" fill="white" fontSize="16">
+            API Server
+          </text>
+        </g>
 
-      {/* Databases */}
-      {/* Course Database */}
-      <g>
-        <ellipse
-          cx="545"
-          cy="130"
-          rx="65"
-          ry="20"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <rect
-          x="480"
-          y="130"
-          width="130"
-          height="55"
-          rx="18"
-          fill="#232323"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <ellipse
-          cx="545"
-          cy="185"
-          rx="65"
-          ry="20"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <text x="500" y="163" fill="#e0e0e0" fontSize="16">
-          Course Database
-        </text>
-      </g>
-      {/* User Database */}
-      <g>
-        <ellipse
-          cx="545"
-          cy="260"
-          rx="65"
-          ry="20"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <rect
-          x="480"
-          y="260"
-          width="130"
-          height="55"
-          rx="18"
-          fill="#232323"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <ellipse
-          cx="545"
-          cy="315"
-          rx="65"
-          ry="20"
-          fill="none"
-          stroke="#a1a1aa"
-          strokeWidth="2"
-        />
-        <text x="515" y="292" fill="#e0e0e0" fontSize="16">
-          User Database
-        </text>
-      </g>
+        {/* Database */}
+        <g>
+          <rect
+            x="598"
+            y="100"
+            width="160"
+            height="80"
+            rx="10"
+            stroke="white"
+            strokeWidth="2"
+            fill="none"
+          />
+          <text x="645" y="145" fill="white" fontSize="14">
+            Database
+          </text>
+        </g>
 
-      {/* Connecting lines */}
-      {/* Student-Instructor to App Server */}
-      <line
-        x1="100"
-        y1="120"
-        x2="268"
-        y2="165"
-        stroke="#7dd3fc"
-        strokeWidth="2"
-      />
-      <line
-        x1="100"
-        y1="260"
-        x2="268"
-        y2="165"
-        stroke="#f472b6"
-        strokeWidth="2"
-      />
-      {/* Student to Video Service */}
-      <line x1="98" y1="90" x2="270" y2="60" stroke="#a1a1aa" strokeWidth="2" />
-      {/* App Server to Databases */}
-      <line
-        x1="448"
-        y1="165"
-        x2="480"
-        y2="157"
-        stroke="#a1a1aa"
-        strokeWidth="2"
-      />
-      <line
-        x1="448"
-        y1="165"
-        x2="480"
-        y2="290"
-        stroke="#a1a1aa"
-        strokeWidth="2"
-      />
-      {/* App Server to Video Streaming */}
-      <line
-        x1="345"
-        y1="135"
-        x2="345"
-        y2="85"
-        stroke="#a1a1aa"
-        strokeWidth="2"
-      />
-    </svg>
+        {/* arrows */}
+        <defs>
+          <marker
+            id="arrow-white"
+            markerWidth="6"
+            markerHeight="6"
+            refX="5"
+            refY="3"
+            orient="auto"
+          >
+            <polygon points="0 0, 6 3, 0 6" fill="white" />
+          </marker>
+        </defs>
+
+        {/* Lines */}
+        <line
+          x1="105"
+          y1="140"
+          x2="180"
+          y2="140"
+          stroke="white"
+          strokeWidth="2"
+          markerEnd="url(#arrow-white)"
+        />
+        <line
+          x1="330"
+          y1="140"
+          x2="380"
+          y2="140"
+          stroke="white"
+          strokeWidth="2"
+          markerEnd="url(#arrow-white)"
+        />
+        <line
+          x1="540"
+          y1="140"
+          x2="595"
+          y2="140"
+          stroke="white"
+          strokeWidth="2"
+          markerEnd="url(#arrow-white)"
+        />
+      </svg>
+    </div>
   );
 
   return (
@@ -323,7 +148,7 @@ export const ProductDemo = () => {
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full h-24 px-4 py-3 border border-zinc-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-24 px-4 py-3 border border-zinc-500 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-zinc-500"
               placeholder="e.g., Create a REST API with PostgreSQL database and Redis cache..."
             />
             <button
